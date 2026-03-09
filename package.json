@@ -1,0 +1,30 @@
+{
+  "name": "kltn",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "kltn"
+  ],
+  "homepage": "https://github.com/Tkin04/kltn#readme",
+  "bugs": {
+    "url": "https://github.com/Tkin04/kltn/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tkin04/kltn.git"
+  },
+  "license": "ISC",
+  "author": "tgk",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --inspect index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
