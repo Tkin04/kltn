@@ -23,26 +23,27 @@
     "watch": "sass --watch src/resources/scss:src/public/css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "lint-staged":{
+  "lint-staged": {
     "src/**/*.{js,json,scss}": "prettier --single-quote --trailing-comma all --tab-width 4 --write"
   },
-
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
-
   "dependencies": {
     "express": "^5.2.1",
-    "express-handlebars": "^8.0.6"
+    "express-handlebars": "^8.0.6",
+    "method-override": "^3.0.0",
+    "mongoose": "^9.3.3",
+    "slugify": "^1.6.9"
   },
   "devDependencies": {
-    "morgan": "^1.10.1",
-    "nodemon": "^3.1.14",
-    "sass": "^1.97.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1"
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.8.1",
+    "sass": "^1.97.3"
   }
 }

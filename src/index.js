@@ -1,11 +1,19 @@
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
+const methodOverride = require('method-override');
 const { engine } = require('express-handlebars');
 const app = express();
+app.use(methodOverride('_method'));
 const port = 3000;
 
 const router = require('./routes');
+const db = require('./config/db');
+
+// Connect to DB
+db.connect();
+
+// Static files
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -19,14 +27,17 @@ app.engine(
     'hbs',
     engine({
         extname: '.hbs',
+        helpers: {
+            sum: (a, b) => a + b,
+        }
     }),
 );
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'resources/views'));
+app.set('views', path.join(__dirname, 'resources', 'views'));
 
 // Routes init
 router(app);
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`App listening on port ${port}`);
 });
