@@ -2,6 +2,7 @@ const { create } = require('express-handlebars');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const Schema = mongoose.Schema;
+const mongooseDelete = require('mongoose-delete');
 
 const Course = new Schema({
     name: { type: String, required: true },
@@ -30,6 +31,11 @@ Course.pre('save', async function() {
 
         this.slug = slug;
     }
+});
+
+Course.plugin(mongooseDelete, {
+    deletedAt: true, 
+    overrideMethods: 'all' 
 });
 
 module.exports = mongoose.model('Course', Course);
