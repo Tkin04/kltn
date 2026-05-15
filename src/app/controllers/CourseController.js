@@ -60,6 +60,7 @@ class CourseController {
             .then(() => res.redirect('/me/trash/courses'))
             .catch(next);
     }
+    
     //[POST] /courses/handle-form-actions
     handleFormActions(req, res, next){
         switch(req.body.action){
