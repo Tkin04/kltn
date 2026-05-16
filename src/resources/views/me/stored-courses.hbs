@@ -1,6 +1,6 @@
 <form name="container-form" method="POST" action="/courses/handle-form-actions" class="mt-4">
     <div>
-        <h3>Khóa học đã lưu</h3>
+        <h3>Bài viết đã đăng</h3>
         <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a>
         <div class="mt-4 d-flex align-items-center">
             <div class="form-check">
@@ -21,20 +21,33 @@
     <table class="table mt-4">
         <thead>
             <tr>
+
                 <th scope="col"></th>
-                <th scope="col">#</th>
+
                 <th scope="col">
-                    Tên bài
+                    #
+                </th>
+
+                <th scope="col">
+                    Tiêu đề
                     {{{sortable 'name' _sort}}}
                 </th>
-                <th scope="col">Trình độ
-                    {{{sortable 'level' _sort}}}
 
+                <th scope="col">
+                    Danh mục
+                    {{{sortable 'category' _sort}}}
                 </th>
-                <th scope="col" colspan="2">Thời gian tạo
+
+                <th scope="col">
+                    Trạng thái
+                    {{{sortable 'status' _sort}}}
+                </th>
+
+                <th scope="col" colspan="2">
+                    Ngày đăng
                     {{{sortable 'createdAt' _sort}}}
-
                 </th>
+
             </tr>
         </thead>
         <tbody>
@@ -47,7 +60,14 @@
                 </td>
                 <th scope="row">{{sum @index 1}}</th>
                 <td>{{this.name}}</td>
-                <td>{{this.level}}</td>
+                <td>{{this.category}}</td>
+                <td>
+                    {{#if (eq this.status 'published')}}
+                        Công khai
+                    {{else}}
+                        Nháp
+                    {{/if}}
+                </td>
                 <td>{{this.createdAt}}</td>
                 <td>
                     <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
@@ -56,7 +76,7 @@
             </tr>
             {{else}}
             <tr>
-                <td colspan="5" class="text-center">Không có khóa học nào.
+                <td colspan="5" class="text-center">Không có bài viết nào.
                     <a href="/courses/create">Đăng ngay.</a>
                 </td>
             </tr>
@@ -74,7 +94,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Bạn có chắc chắn muốn xóa khóa học này không?</p>
+        <p>Bạn có chắc chắn muốn xóa bài viết này không?</p>
       </div>
       <div class="modal-footer">
         <button id="btn-delete-course" type="button" class="btn btn-danger">Xóa bỏ</button>

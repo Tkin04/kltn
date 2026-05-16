@@ -7,6 +7,9 @@ const app = express();
 app.use(methodOverride('_method'));
 const port = 3000;
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo').default;
+
 const SortMiddleware = require('./app/middlewares/SortMiddleware');
 
 const router = require('./routes');
@@ -21,6 +24,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// Session
+app.use(
+    session({
+        secret: 'kltn-secret-key',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24, // 1 ngày
+        },
+        store: MongoStore.create({
+            mongoUrl:'mongodb://localhost:27017/F8_news_dev',
+        }),
+    }),
+);
+app.use((req, res, next) => {
+
+    res.locals.user =
+        req.session.user;
+
+    next();
+});
 
 // Custom middlewares
 app.use(SortMiddleware);
@@ -52,7 +76,8 @@ app.engine(
 
                 return `<a href="?_sort&column=${field}&type=${type}">
                 <span class="${icon}"></span></a>`;
-            }
+            },
+            eq: (a, b) => a === b
         }
     }),
 );

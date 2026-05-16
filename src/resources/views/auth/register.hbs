@@ -1,0 +1,49 @@
+<div class="container mt-4">
+
+    <h2>Đăng ký</h2>
+
+    <form method="POST" action="/auth/register">
+
+        <div class="mb-3">
+            <label>Tên người dùng</label>
+
+            <input
+                type="text"
+                name="username"
+                class="form-control"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+
+            <input
+                type="email"
+                name="email"
+                class="form-control"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label>Mật khẩu</label>
+
+            <input
+                type="password"
+                name="password"
+                class="form-control"
+                required
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-success"
+        >
+            Đăng ký
+        </button>
+
+    </form>
+
+</div>

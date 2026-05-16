@@ -1,12 +1,86 @@
-<div class="mt-4">
-    <div class="row">
-        <div class="col-lg-3">
-            <button>Xem ngay</button>
-        </div>
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+
         <div class="col-lg-9">
-            <h2>{{course.name}}</h2>
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{course.videoId}}?si=SPz1aw4XabWyDgiO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            <p>{{course.description}}</p>
+
+            <!-- Thumbnail -->
+            {{#if course.image}}
+            <img
+                src="{{course.image}}"
+                alt="{{course.name}}"
+                class="img-fluid rounded mb-4 w-100"
+                style="
+                    max-height: 450px;
+                    object-fit: cover;
+                "
+            >
+            {{/if}}
+
+            <!-- Title -->
+            <h1 class="mb-3">
+                {{course.name}}
+            </h1>
+
+            <!-- Meta -->
+            <div
+                class="
+                text-muted
+                mb-4
+                border-bottom
+                pb-3
+                "
+            >
+
+                <span>
+                    Danh mục:
+                    {{course.category}}
+                </span>
+
+                <span class="mx-2">
+                    |
+                </span>
+
+                <span>
+                    Lượt xem:
+                    {{course.views}}
+                </span>
+
+                <span class="mx-2">
+                    |
+                </span>
+
+                <span>
+                    {{course.createdAt}}
+                </span>
+
+            </div>
+
+            <!-- Description -->
+            {{#if course.description}}
+            <div class="mb-4">
+
+                <h5>
+                    Tóm tắt
+                </h5>
+
+                <p>
+                    {{course.description}}
+                </p>
+
+            </div>
+            {{/if}}
+
+            <!-- Content -->
+            <div
+                class="
+                fs-5
+                lh-lg
+                "
+            >
+                {{course.content}}
+            </div>
+
         </div>
     </div>
 </div>

@@ -1,15 +1,34 @@
 const Course = require('../models/Course');
+const slugify = require('slugify');
 const { mongooseToObject } = require('../../util/mongoose');
 
 class CourseController {
     // [GET] /courses/:slug
     show(req, res, next) {
         Course.findOne({ slug: req.params.slug })
-            .then(course => {
-                res.render('courses/show', { course: mongooseToObject(course) });
-            })
-            .catch(next);
-
+        .then(course => {
+            Course.updateOne(
+                {
+                    _id:
+                    course._id
+                },
+                {
+                    $inc: {
+                        views: 1
+                    }
+                }
+            ).exec();
+            res.render(
+                'courses/show',
+                {
+                    course:
+                    mongooseToObject(
+                        course
+                    )
+                }
+            );
+        })
+        .catch(next);
     }
 
     // [GET] /courses/create
@@ -19,10 +38,12 @@ class CourseController {
 
     // [POST] /courses/store
     store(req, res, next) {
-        req.body.image = `https://img.youtube.com/vi/${req.body.videoId}/sddefault.jpg`;
+        req.body.author = req.session.user._id;
         const course = new Course(req.body);
         course.save()
-            .then(() => res.redirect('/me/stored/courses'))
+            .then(() =>
+                res.redirect('/me/stored/courses')
+            )
             .catch(next);
     }
         // [GET] /courses/:id/edit
@@ -36,10 +57,28 @@ class CourseController {
 
     //[PUT] /courses/:id
     update(req, res, next){
-        Course.updateOne({ _id: req.params.id }, req.body)
-            .then(() => res.redirect('/me/stored/courses'))
-            .catch(next);
+        req.body.slug = slugify(
+            req.body.name,
+            {
+                lower: true,
+                strict: true,
+            }
+        );
+        Course.updateOne(
+            {
+                _id:
+                req.params.id
+            },
+            req.body
+        )
+        .then(() =>
+            res.redirect(
+                '/me/stored/courses'
+            )
+        )
+        .catch(next);
     }
+
     //[DELETE] /courses/:id
     destroy(req, res, next){
         Course.delete({ _id: req.params.id })

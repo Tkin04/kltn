@@ -1,31 +1,134 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">F88</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+
+    <a class="navbar-brand" href="/">
+      F88
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Search form -->
+
+    <div
+      class="collapse navbar-collapse"
+      id="navbarSupportedContent"
+    >
+
+      <!-- Search -->
       <form class="d-flex me-3">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+        >
+
+        <button
+          class="btn btn-outline-success"
+          type="submit"
+        >
+          Search
+        </button>
       </form>
-      <!-- Dropdown menu -->
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+      <ul
+        class="navbar-nav ms-auto mb-2 mb-lg-0"
+      >
+
+        {{#if user}}
+
+        <!-- USER LOGIN -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="../../../public/img/fita.png" alt="User" class="user-avatar">
-            Fita          
+
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+
+            <img
+              src="/img/fita.png"
+              alt="User"
+              class="user-avatar"
+            >
+
+            {{user.username}}
+
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="/courses/create">Create Course</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/me/stored/courses">My Courses</a></li>
-            <li><a class="dropdown-item" href="/me/stored/news">My News</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item disabled" href="#">Disabled</a></li>
+
+          <ul
+            class="dropdown-menu"
+          >
+
+            {{#if (eq user.role "admin")}}
+
+            <li>
+              <a
+                class="dropdown-item"
+                href="/courses/create"
+              >
+                Tạo bài viết
+              </a>
+            </li>
+
+            <li>
+              <a
+                class="dropdown-item"
+                href="/me/stored/courses"
+              >
+                Quản lý bài viết
+              </a>
+            </li>
+
+            <li>
+              <hr
+                class="dropdown-divider"
+              >
+            </li>
+
+            {{/if}}
+
+            <li>
+              <a
+                class="dropdown-item"
+                href="/auth/logout"
+              >
+                Đăng xuất
+              </a>
+            </li>
+
           </ul>
         </li>
+
+        {{else}}
+
+        <!-- GUEST -->
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/auth/login"
+          >
+            Đăng nhập
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/auth/register"
+          >
+            Đăng ký
+          </a>
+        </li>
+
+        {{/if}}
+
       </ul>
     </div>
   </div>
