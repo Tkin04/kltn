@@ -72,7 +72,7 @@ const Post = new Schema(
         category: {
             type: String,
             default:
-            'Tin tức',
+            'General',
         },
     },
     {

@@ -1,13 +1,31 @@
 const Course = require('../models/Course');
 const slugify = require('slugify');
-const { mongooseToObject } = require('../../util/mongoose');
+const {
+    mongooseToObject,
+    multipleMongooseToObject
+} = require('../../util/mongoose');
 
 class CourseController {
     // [GET] /courses/:slug
-    show(req, res, next) {
-        Course.findOne({ slug: req.params.slug })
-        .then(course => {
-            Course.updateOne(
+    async show(req, res, next) {
+        try {
+
+            const course =
+                await Course.findOne({
+                    slug:
+                    req.params.slug
+                });
+
+            if (!course) {
+                return res
+                    .status(404)
+                    .send(
+                        'Không tìm thấy bài viết'
+                    );
+            }
+
+            // tăng view
+            await Course.updateOne(
                 {
                     _id:
                     course._id
@@ -17,18 +35,32 @@ class CourseController {
                         views: 1
                     }
                 }
-            ).exec();
+            );
+
+            // bài liên quan
+            const relatedCourses =
+                await Course.find({
+                    category:
+                    course.category,
+
+                    _id: {
+                        $ne:
+                        course._id
+                    }
+                })
+                .limit(3);
+
             res.render(
                 'courses/show',
                 {
-                    course:
-                    mongooseToObject(
-                        course
-                    )
+                    course: mongooseToObject(course),
+                    relatedCourses: multipleMongooseToObject(relatedCourses),
                 }
             );
-        })
-        .catch(next);
+
+        } catch (error) {
+            next(error);
+        }
     }
 
     // [GET] /courses/create

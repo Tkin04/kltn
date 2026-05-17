@@ -1,135 +1,230 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top">
+    <div class="container">
 
-    <a class="navbar-brand" href="/">
-      F88
-    </a>
-
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div
-      class="collapse navbar-collapse"
-      id="navbarSupportedContent"
-    >
-
-      <!-- Search -->
-      <form class="d-flex me-3">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search"
+        <!-- Logo -->
+        <a
+            class="navbar-brand fw-bold fs-4 text-uppercase"
+            href="/"
         >
+            ⚽ Football News
+        </a>
 
+        <!-- Mobile toggle -->
         <button
-          class="btn btn-outline-success"
-          type="submit"
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
         >
-          Search
+            <span class="navbar-toggler-icon"></span>
         </button>
-      </form>
 
-      <ul
-        class="navbar-nav ms-auto mb-2 mb-lg-0"
-      >
+        <div
+            class="collapse navbar-collapse"
+            id="navbarSupportedContent"
+        >
 
-        {{#if user}}
+            <!-- Navigation -->
+            <ul class="navbar-nav me-lg-4">
 
-        <!-- USER LOGIN -->
-        <li class="nav-item dropdown">
+                <li class="nav-item">
+                    <a
+                        class="nav-link {{#unless category}}active{{/unless}}"
+                        href="/"
+                    >
+                        Trang chủ
+                    </a>
+                </li>
 
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
+                <li class="nav-item">
+                    <a
+                        class="nav-link {{#if (eq category "transfer")}}active{{/if}}"
+                        href="/?category=transfer"
+                    >
+                        Chuyển nhượng
+                    </a>
+                </li>
 
-            <img
-              src="/img/fita.png"
-              alt="User"
-              class="user-avatar"
+                <li class="nav-item">
+                    <a
+                        class="nav-link {{#if (eq category "premier-league")}}active{{/if}}"
+                        href="/?category=premier-league"
+                    >
+                        Ngoại hạng Anh
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link {{#if (eq category "champions-league")}}active{{/if}}"
+                        href="/?category=champions-league"
+                    >
+                        Champions League
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link {{#if (eq category "laliga")}}active{{/if}}"
+                        href="/?category=laliga"
+                    >
+                        La Liga
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Search -->
+            <form
+                id="searchForm"
+                action="/"
+                method="GET"
+                class="d-flex flex-grow-1 my-3 my-lg-0"
+                role="search"
             >
+                <div class="input-group">
 
-            {{user.username}}
+                    <input
+                        id="headerSearchInput"
+                        name="search"
+                        class="form-control border-0"
+                        type="search"
+                        placeholder="Tìm kiếm tin tức bóng đá..."
+                        value="{{search}}"
+                    >
+                    <input
+                        id="categoryInput"
+                        type="hidden"
+                        name="category"
+                        value="{{category}}"
+                    />
+                    <button
+                        id="headerSearchBtn"
+                        class="btn btn-danger px-4"
+                        type="submit"
+                    >
+                        Tìm
+                    </button>
 
-          </a>
+                </div>
+            </form>
 
-          <ul
-            class="dropdown-menu"
-          >
+            <!-- User -->
+            <ul class="navbar-nav ms-lg-4">
 
-            {{#if (eq user.role "admin")}}
+                {{#if user}}
 
-            <li>
-              <a
-                class="dropdown-item"
-                href="/courses/create"
-              >
-                Tạo bài viết
-              </a>
-            </li>
+                <li class="nav-item dropdown">
 
-            <li>
-              <a
-                class="dropdown-item"
-                href="/me/stored/courses"
-              >
-                Quản lý bài viết
-              </a>
-            </li>
+                    <a
+                        class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                    >
 
-            <li>
-              <hr
-                class="dropdown-divider"
-              >
-            </li>
+                        <img
+                            src="/img/fita.png"
+                            alt="User"
+                            width="36"
+                            height="36"
+                            class="rounded-circle border"
+                        >
 
-            {{/if}}
+                        <span>
+                            {{user.username}}
+                        </span>
 
-            <li>
-              <a
-                class="dropdown-item"
-                href="/auth/logout"
-              >
-                Đăng xuất
-              </a>
-            </li>
+                    </a>
 
-          </ul>
-        </li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
 
-        {{else}}
+                        {{#if (eq user.role "admin")}}
 
-        <!-- GUEST -->
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="/auth/login"
-          >
-            Đăng nhập
-          </a>
-        </li>
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="/courses/create"
+                            >
+                                Đăng bài viết
+                            </a>
+                        </li>
 
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="/auth/register"
-          >
-            Đăng ký
-          </a>
-        </li>
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="/me/stored/courses"
+                            >
+                                Quản lý bài viết
+                            </a>
+                        </li>
 
-        {{/if}}
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
 
-      </ul>
+                        {{/if}}
+
+                        <li>
+                            <a
+                                class="dropdown-item text-danger"
+                                href="/auth/logout"
+                            >
+                                Đăng xuất
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                {{else}}
+
+                <li class="nav-item">
+                    <a
+                        class="btn btn-outline-light me-2"
+                        href="/auth/login"
+                    >
+                        Đăng nhập
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="btn btn-danger"
+                        href="/auth/register"
+                    >
+                        Đăng ký
+                    </a>
+                </li>
+
+                {{/if}}
+
+            </ul>
+
+        </div>
     </div>
-  </div>
 </nav>
+<script>
+    const searchForm =
+        document.getElementById(
+            'searchForm'
+        );
+
+    searchForm.addEventListener(
+        'submit',
+        function () {
+
+            const categoryInput =
+                document.getElementById(
+                    'categoryInput'
+                );
+
+            if (
+                !categoryInput.value
+            ) {
+                categoryInput.remove();
+            }
+        }
+    );
+</script>

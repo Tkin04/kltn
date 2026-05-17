@@ -1,86 +1,112 @@
-<div class="container mt-4">
-
+<div class="container py-5">
     <div class="row justify-content-center">
-
         <div class="col-lg-9">
+            <!-- Category -->
+            <span class="badge bg-danger mb-3">
+                {{#if (eq course.category "transfer")}}
+                    Chuyển nhượng
+                {{/if}}
 
+                {{#if (eq course.category "premier-league")}}
+                    Ngoại hạng Anh
+                {{/if}}
+
+                {{#if (eq course.category "champions-league")}}
+                    Champions League
+                {{/if}}
+
+                {{#if (eq course.category "laliga")}}
+                    La Liga
+                {{/if}}
+
+                {{#if (eq course.category "serie-a")}}
+                    Serie A
+                {{/if}}
+
+                {{#if (eq course.category "bundesliga")}}
+                    Bundesliga
+                {{/if}}
+
+                {{#if (eq course.category "general")}}
+                    Tin tức chung
+                {{/if}}
+            </span>
+
+            <!-- Title -->
+            <h1 class=" fw-bold display-5 mb-4 ">
+                {{course.name}}
+            </h1>
+
+            <!-- Meta -->
+            <div class=" d-flex flex-wrap gap-3 text-muted border-bottom pb-3 mb-4 ">
+                <span>
+                    👁 {{course.views}}
+                    lượt xem
+                </span>
+                <span>
+                    📰 Football News
+                </span>
+                <span>
+                    📅
+                    {{course.createdAt}}
+                </span>
+            </div>
             <!-- Thumbnail -->
             {{#if course.image}}
             <img
                 src="{{course.image}}"
                 alt="{{course.name}}"
-                class="img-fluid rounded mb-4 w-100"
-                style="
-                    max-height: 450px;
-                    object-fit: cover;
-                "
+                class="img-fluid rounded-4 shadow-sm mb-5 w-100"
+                style="max-height: 500px; object-fit: cover;"
             >
             {{/if}}
 
-            <!-- Title -->
-            <h1 class="mb-3">
-                {{course.name}}
-            </h1>
-
-            <!-- Meta -->
-            <div
-                class="
-                text-muted
-                mb-4
-                border-bottom
-                pb-3
-                "
-            >
-
-                <span>
-                    Danh mục:
-                    {{course.category}}
-                </span>
-
-                <span class="mx-2">
-                    |
-                </span>
-
-                <span>
-                    Lượt xem:
-                    {{course.views}}
-                </span>
-
-                <span class="mx-2">
-                    |
-                </span>
-
-                <span>
-                    {{course.createdAt}}
-                </span>
-
-            </div>
-
             <!-- Description -->
             {{#if course.description}}
-            <div class="mb-4">
-
-                <h5>
+            <div class=" bg-light rounded-4 p-4 mb-5 ">
+                <h5 class="fw-bold">
                     Tóm tắt
                 </h5>
-
-                <p>
+                <p class="mb-0">
                     {{course.description}}
                 </p>
-
             </div>
             {{/if}}
 
             <!-- Content -->
-            <div
-                class="
-                fs-5
-                lh-lg
-                "
-            >
+            <div class=" fs-5 lh-lg mb-5 ">
                 {{course.content}}
             </div>
 
+            <!-- Related -->
+            {{#if relatedCourses.length}}
+            <section class="mt-5">
+                <h3 class="fw-bold mb-4">Tin liên quan</h3>
+                <div class="row g-4">
+                    {{#each relatedCourses}}
+                    <div class="col-md-4">
+                        <div class=" card h-100 border-0 shadow-sm rounded-4 overflow-hidden ">
+                            <a href="/courses/{{this.slug}}">
+                                <img src="{{this.image}}" class=" card-img-top " style=" height: 180px;
+                                object-fit: cover; ">
+                            </a>
+                            <div class="card-body">
+                                <span class=" badge bg-danger mb-2 ">{{this.category}}</span>
+                                <h6 class=" fw-bold ">
+                                    <a
+                                        href="/courses/{{this.slug}}"
+                                        class=" text-decoration-none text-dark "
+                                    >
+                                        {{this.name}}
+                                    </a>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
         </div>
     </div>
 </div>
