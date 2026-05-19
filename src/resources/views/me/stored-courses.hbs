@@ -2,6 +2,43 @@
     <div>
         <h3>Bài viết đã đăng</h3>
         <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a>
+        <div class="row mt-4 g-3">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-muted">Tổng bài viết</h6>
+                        <h3 class="fw-bold mb-0">{{analytics.totalCourses}}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-muted">Công khai</h6>
+                        <h3 class="fw-bold text-success mb-0">{{analytics.publishedCount}}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-muted">Tin nháp</h6>
+                        <h3 class="fw-bold text-warning mb-0">{{analytics.draftCount}}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-muted">Tổng lượt xem</h6>
+                        <h3 class="fw-bold text-danger mb-0">{{analytics.totalViews}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="mt-4 d-flex align-items-center">
             <div class="form-check">
                 <input class="form-check-input mt-0" type="checkbox" value="" id="checkbox-all">
@@ -21,33 +58,12 @@
     <table class="table mt-4">
         <thead>
             <tr>
-
                 <th scope="col"></th>
-
-                <th scope="col">
-                    #
-                </th>
-
-                <th scope="col">
-                    Tiêu đề
-                    {{{sortable 'name' _sort}}}
-                </th>
-
-                <th scope="col">
-                    Danh mục
-                    {{{sortable 'category' _sort}}}
-                </th>
-
-                <th scope="col">
-                    Trạng thái
-                    {{{sortable 'status' _sort}}}
-                </th>
-
-                <th scope="col" colspan="2">
-                    Ngày đăng
-                    {{{sortable 'createdAt' _sort}}}
-                </th>
-
+                <th scope="col">#</th>
+                <th scope="col">Tiêu đề {{{sortable 'name' _sort}}}</th>
+                <th scope="col">Danh mục {{{sortable 'category' _sort}}}</th>
+                <th scope="col">Trạng thái {{{sortable 'status' _sort}}}</th>
+                <th scope="col" colspan="2">Ngày đăng {{{sortable 'createdAt' _sort}}}</th>
             </tr>
         </thead>
         <tbody>
@@ -68,7 +84,7 @@
                         Nháp
                     {{/if}}
                 </td>
-                <td>{{this.createdAt}}</td>
+                <td>{{formatDate this.createdAt}}</td>
                 <td>
                     <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
                     <a href="" class="btn btn-link" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#confirmDeleteModal">Xóa</a>

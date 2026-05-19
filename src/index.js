@@ -77,7 +77,12 @@ app.engine(
                 return `<a href="?_sort&column=${field}&type=${type}">
                 <span class="${icon}"></span></a>`;
             },
-            eq: (a, b) => a === b
+            eq: (a, b) => a === b,
+            formatDate: (date) => {
+                if (!date) return '';
+
+                return new Date(date).toLocaleDateString('vi-VN');
+            },
         }
     }),
 );

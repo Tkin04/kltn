@@ -145,6 +145,11 @@ class CourseController {
                     .then(() => res.redirect('/me/trash/courses'))
                     .catch(next);
                 break;
+            case 'force-delete':
+                Course.deleteMany({ _id: { $in: req.body.courseIds } })
+                    .then(() => res.redirect('/me/trash/courses'))
+                    .catch(next);
+                break;
             default:
                 res.json({ message: 'Hành động không hợp lệ!' });
         }

@@ -48,13 +48,13 @@
                 </span>
                 <span>
                     📅
-                    {{course.createdAt}}
+                    {{formatDate course.createdAt}}
                 </span>
             </div>
             <!-- Thumbnail -->
             {{#if course.image}}
             <img
-                src="{{course.image}}"
+                src="{{#if course.image}}{{course.image}}{{else}}/img/default-news.jpg{{/if}}"
                 alt="{{course.name}}"
                 class="img-fluid rounded-4 shadow-sm mb-5 w-100"
                 style="max-height: 500px; object-fit: cover;"
@@ -87,11 +87,38 @@
                     <div class="col-md-4">
                         <div class=" card h-100 border-0 shadow-sm rounded-4 overflow-hidden ">
                             <a href="/courses/{{this.slug}}">
-                                <img src="{{this.image}}" class=" card-img-top " style=" height: 180px;
-                                object-fit: cover; ">
+                                <img
+                                    src="{{#if this.image}}{{this.image}}{{else}}/img/default-news.jpg{{/if}}"
+                                    class="card-img-top"
+                                    alt="{{this.name}}"
+                                    style="height: 180px; object-fit: cover;"
+                                    onerror="this.src='/img/default-news.jpg'"
+                                >
                             </a>
                             <div class="card-body">
-                                <span class=" badge bg-danger mb-2 ">{{this.category}}</span>
+                                <span class="badge bg-danger mb-2">
+                                    {{#if (eq this.category "transfer")}}
+                                        Chuyển nhượng
+                                    {{/if}}
+                                    {{#if (eq this.category "premier-league")}}
+                                        Ngoại hạng Anh
+                                    {{/if}}
+                                    {{#if (eq this.category "champions-league")}}
+                                        Champions League
+                                    {{/if}}
+                                    {{#if (eq this.category "laliga")}}
+                                        La Liga
+                                    {{/if}}
+                                    {{#if (eq this.category "serie-a")}}
+                                        Serie A
+                                    {{/if}}
+                                    {{#if (eq this.category "bundesliga")}}
+                                        Bundesliga
+                                    {{/if}}
+                                    {{#if (eq this.category "general")}}
+                                        Tin tức chung
+                                    {{/if}}
+                                </span>                                
                                 <h6 class=" fw-bold ">
                                     <a
                                         href="/courses/{{this.slug}}"

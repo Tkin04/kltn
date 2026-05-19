@@ -1,71 +1,112 @@
 <div class="container py-4">
-
     <!-- Hero -->
     <div class="bg-dark text-light rounded-4 p-5 mb-5 shadow">
-
         <div class="row align-items-center">
-
             <div class="col-lg-8">
-
                 <span class="badge bg-danger mb-3">
                     Tin nóng 24h
                 </span>
-
                 <h1 class="fw-bold display-5">
-                    Cập nhật tin tức bóng đá nhanh nhất
+                    {{heroTitle}}
                 </h1>
-
                 <p class="text-light-emphasis mt-3 mb-0">
-                    Tin chuyển nhượng, kết quả trận đấu, phân tích chiến thuật
+                    {{heroDescription}}
                     và những diễn biến mới nhất từ thế giới bóng đá.
                 </p>
-
             </div>
-
         </div>
+    </div>
+    <!-- Top viewed -->
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+                🔥 Được xem nhiều nhất
+            </h2>
+        </div>
+        <div class="row g-3">
+            {{#each topViewedCourses}}
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-danger">
+                                {{#if (eq this.category "transfer")}}
+                                    Chuyển nhượng
+                                {{/if}}
 
+                                {{#if (eq this.category "premier-league")}}
+                                    Ngoại hạng Anh
+                                {{/if}}
+
+                                {{#if (eq this.category "champions-league")}}
+                                    Champions League
+                                {{/if}}
+
+                                {{#if (eq this.category "laliga")}}
+                                    La Liga
+                                {{/if}}
+
+                                {{#if (eq this.category "serie-a")}}
+                                    Serie A
+                                {{/if}}
+
+                                {{#if (eq this.category "bundesliga")}}
+                                    Bundesliga
+                                {{/if}}
+
+                                {{#if (eq this.category "general")}}
+                                    Tin tức chung
+                                {{/if}}
+                            </span>
+                            <span class="badge bg-dark">
+                                👁 {{this.views}} lượt xem
+                            </span>
+                        </div>
+                        <h5 class="fw-bold">
+                            <a href="/courses/{{this.slug}}" class="text-decoration-none text-dark">
+                                {{this.name}}
+                            </a>
+                        </h5>
+                        <p class="text-muted small mb-3">
+                            {{this.description}}
+                        </p>
+                        <a href="/courses/{{this.slug}}" class="btn btn-sm btn-outline-danger rounded-pill">
+                            Xem bài viết
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
     </div>
 
     <!-- Section title -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <div>
-
             <h2 class="fw-bold mb-1">
                 Tin tức mới nhất
             </h2>
-
             <p class="text-muted mb-0">
                 Có {{courses.length}} bài viết
             </p>
-
         </div>
-
     </div>
 
     <!-- News list -->
     <div class="row g-4">
-
         {{#each courses}}
         <div class="col-md-6 col-lg-4">
-
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-
                 <a href="/courses/{{this.slug}}">
-                    <img
-                        class="card-img-top"
-                        src="{{this.image}}"
-                        alt="{{this.name}}"
+                    <img class="card-img-top"
+                        src="{{#if this.image}}{{this.image}}{{else}}/img/default-news.jpg{{/if}}" alt="{{this.name}}"
                         style="height: 240px; object-fit: cover;"
                     >
                 </a>
-
                 <div class="card-body d-flex flex-column">
-
                 <span
                     class="badge bg-danger align-self-start mb-2"
                 >
-
                     {{#if (eq this.category "transfer")}}
                         Chuyển nhượng
                     {{/if}}
@@ -93,52 +134,33 @@
                     {{#if (eq this.category "general")}}
                         Tin tức chung
                     {{/if}}
-
                 </span>
-
-                    <a
-                        href="/courses/{{this.slug}}"
-                        class="text-decoration-none text-dark"
-                    >
+                    <a href="/courses/{{this.slug}}" class="text-decoration-none text-dark">
                         <h5 class="fw-bold card-title">
                             {{this.name}}
                         </h5>
                     </a>
-
                     <p class="text-muted card-text flex-grow-1">
                         {{this.description}}
                     </p>
-
-                    <a
-                        href="/courses/{{this.slug}}"
-                        class="btn btn-outline-danger rounded-pill"
-                    >
+                    <a href="/courses/{{this.slug}}" class="btn btn-outline-danger rounded-pill">
                         Đọc bài viết
                     </a>
-
                 </div>
-
             </div>
         </div>
         {{/each}}
-
     </div>
 
     <!-- Empty state -->
     {{#unless courses.length}}
-
     <div class="text-center py-5">
-
         <h3 class="fw-bold">
             Không tìm thấy bài viết
         </h3>
-
         <p class="text-muted">
             Không có kết quả phù hợp với từ khóa tìm kiếm.
         </p>
-
     </div>
-
     {{/unless}}
-
 </div>
