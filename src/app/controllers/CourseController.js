@@ -80,10 +80,18 @@ class CourseController {
     }
         // [GET] /courses/:id/edit
     edit(req, res, next) {
-        Course.findById(req.params.id)
-        .then(course => res.render('courses/edit', {
-            course : mongooseToObject(course)
-        }))
+        Course.findOne({
+            _id: req.params.id,
+            author: req.session.user._id,
+        })
+        .then(course => {
+            if (!course) {
+                return res
+                    .status(403)
+                    .send('Bạn không có quyền chỉnh sửa bài viết này');
+            }
+            res.render('courses/edit',{course: mongooseToObject(course)});
+        })
         .catch(next);
     }
 
@@ -98,36 +106,58 @@ class CourseController {
         );
         Course.updateOne(
             {
-                _id:
-                req.params.id
+                _id: req.params.id,
+                author:
+                req.session.user._id,
             },
             req.body
         )
-        .then(() =>
-            res.redirect(
-                '/me/stored/courses'
-            )
-        )
+        .then(result => {
+
+            if (!result.matchedCount) {
+                return res.send(
+                    'Bạn không có quyền chỉnh sửa bài viết này'
+                );
+            }
+
+            res.redirect('/me/stored/courses');
+        })
         .catch(next);
     }
 
     //[DELETE] /courses/:id
     destroy(req, res, next){
-        Course.delete({ _id: req.params.id })
-        .then(() => res.redirect('/me/stored/courses'))
+        Course.delete({
+            _id: req.params.id,
+            author: req.session.user._id,
+        })
+        .then(result => {
+            if (!result.modifiedCount) {
+                return res.send(
+                    'Bạn không có quyền xóa bài viết này'
+                );
+            }
+            res.redirect('/me/stored/courses');
+        })
         .catch(next);
     }
 
     //[DELETE] /courses/:id/force
     forcedestroy(req, res, next){
-        Course.deleteOne({ _id: req.params.id })
+        Course.deleteOne({
+            _id: req.params.id,
+            author: req.session.user._id,
+        })
             .then(() => res.redirect('/me/trash/courses'))
             .catch(next);
     }
 
     //[PATCH] /courses/:id/restore
     restore(req, res, next){
-        Course.restore({ _id: req.params.id })
+        Course.restore({
+            _id: req.params.id,
+            author: req.session.user._id,
+        })
             .then(() => res.redirect('/me/trash/courses'))
             .catch(next);
     }
@@ -136,18 +166,84 @@ class CourseController {
     handleFormActions(req, res, next){
         switch(req.body.action){
             case 'delete':
-                Course.delete({ _id: { $in: req.body.courseIds } })
-                    .then(() => res.redirect('/me/stored/courses'))
+                Course.delete({
+                    _id: { $in: req.body.courseIds },
+                    author: req.session.user._id,
+                })
+                    .then(result => {
+                        const selectedCount = req.body.courseIds.length;
+                        const deletedCount = result.modifiedCount;
+                        const deniedCount = selectedCount - deletedCount;
+
+                        if (deniedCount > 0) {
+                            return res.send(`
+                                <script>
+                                    alert(
+                                        'Đã xóa ${deletedCount} bài. '
+                                        + '${deniedCount} bài '
+                                        + 'không thuộc quyền '
+                                        + 'quản lý của bạn.'
+                                    );
+                                    window.location = '/me/stored/courses';
+                                </script>
+                            `);
+                        }
+                        res.redirect('/me/stored/courses');
+                    })
                     .catch(next);
                 break;
             case 'restore':
-                Course.restore({ _id: { $in: req.body.courseIds } })
-                    .then(() => res.redirect('/me/trash/courses'))
+                Course.restore({
+                    _id: { $in: req.body.courseIds },
+                    author: req.session.user._id,
+                })
+                    .then(result => {
+                        const selectedCount = req.body.courseIds.length;
+                        const restoredCount = result.modifiedCount;
+                        const deniedCount = selectedCount - restoredCount;
+
+                        if (deniedCount > 0) {
+                            return res.send(`
+                                <script>
+                                    alert(
+                                        'Đã khôi phục ${restoredCount} bài. '
+                                        + '${deniedCount} bài '
+                                        + 'không thuộc quyền '
+                                        + 'quản lý của bạn.'
+                                    );
+                                    window.location = '/me/trash/courses';
+                                </script>
+                            `);
+                        }
+                        res.redirect('/me/trash/courses');
+                    })
                     .catch(next);
                 break;
             case 'force-delete':
-                Course.deleteMany({ _id: { $in: req.body.courseIds } })
-                    .then(() => res.redirect('/me/trash/courses'))
+                Course.deleteMany({
+                    _id: { $in: req.body.courseIds },
+                    author: req.session.user._id,
+                })
+                    .then(result => {
+                        const selectedCount = req.body.courseIds.length;
+                        const fdeletedCount = result.modifiedCount;
+                        const deniedCount = selectedCount - fdeletedCount;
+
+                        if (deniedCount > 0) {
+                            return res.send(`
+                                <script>
+                                    alert(
+                                        'Đã xóa ${fdeletedCount} bài. '
+                                        + '${deniedCount} bài '
+                                        + 'không thuộc quyền '
+                                        + 'quản lý của bạn.'
+                                    );
+                                    window.location = '/me/stored/courses';
+                                </script>
+                            `);
+                        }
+                        res.redirect('/me/stored/courses');
+                    })
                     .catch(next);
                 break;
             default:
