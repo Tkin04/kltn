@@ -1,7 +1,5 @@
-const Course = require('../models/Course');
-const {
-    multipleMongooseToObject,
-} = require('../../util/mongoose');
+const Article = require('../models/Article');
+const { multipleMongooseToObject,} = require('../../util/mongoose');
 
 class SiteController {
     // [GET] /
@@ -24,9 +22,9 @@ class SiteController {
                 query.category = category;
             }
 
-            const courses = await Course.find(query);
+            const articles = await Article.find(query);
 
-            const topViewedCourses = await Course.find({ status: 'published', })
+            const topViewedArticles = await Article.find({ status: 'published', })
                 .sort({ views: -1 })
                 .limit(3);
 
@@ -57,29 +55,23 @@ class SiteController {
 
             // CATEGORY
             else if (category) {
-                heroTitle =
-                    categoryMap[category]
-                    || 'Tin tức bóng đá';
-                heroDescription =
-                    `Khám phá các bài viết thuộc chuyên mục ${heroTitle}`;
+                heroTitle = categoryMap[category]|| 'Tin tức bóng đá';
+                heroDescription =`Khám phá các bài viết thuộc chuyên mục ${heroTitle}`;
             }
 
             res.render( 'home', {
-                courses:
-                multipleMongooseToObject(
-                    courses
-                ),
-
-                topViewedCourses:
-                multipleMongooseToObject(
-                    topViewedCourses
-                ),
-
+                articles: multipleMongooseToObject(articles),
+                topViewedArticles: multipleMongooseToObject(topViewedArticles),
                 search,
                 category,
-
                 heroTitle,
                 heroDescription,
+                title: search
+                        ? `Tìm kiếm: ${search}`
+                        : category
+                        ? categoryMap[category]
+                            || 'Tin tức bóng đá'
+                        : 'Trang chủ',
             });
         } catch (error) {
             next(error);
@@ -87,5 +79,4 @@ class SiteController {
     }
 }
 
-module.exports =
-    new SiteController();
+module.exports = new SiteController();

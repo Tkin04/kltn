@@ -24,7 +24,7 @@
             </h2>
         </div>
         <div class="row g-3">
-            {{#each topViewedCourses}}
+            {{#each topViewedArticles}}
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm rounded-4 h-100">
                     <div class="card-body">
@@ -63,14 +63,14 @@
                             </span>
                         </div>
                         <h5 class="fw-bold">
-                            <a href="/courses/{{this.slug}}" class="text-decoration-none text-dark">
+                            <a href="/articles/{{this.slug}}" class="text-decoration-none text-dark">
                                 {{this.name}}
                             </a>
                         </h5>
                         <p class="text-muted small mb-3">
                             {{this.description}}
                         </p>
-                        <a href="/courses/{{this.slug}}" class="btn btn-sm btn-outline-danger rounded-pill">
+                        <a href="/articles/{{this.slug}}" class="btn btn-sm btn-outline-danger rounded-pill">
                             Xem bài viết
                         </a>
                     </div>
@@ -87,17 +87,17 @@
                 Tin tức mới nhất
             </h2>
             <p class="text-muted mb-0">
-                Có {{courses.length}} bài viết
+                Có {{articles.length}} bài viết
             </p>
         </div>
     </div>
 
     <!-- News list -->
     <div class="row g-4">
-        {{#each courses}}
+        {{#each articles}}
         <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                <a href="/courses/{{this.slug}}">
+                <a href="/articles/{{this.slug}}">
                     <img class="card-img-top"
                         src="{{#if this.image}}{{this.image}}{{else}}/img/default-news.jpg{{/if}}" alt="{{this.name}}"
                         style="height: 240px; object-fit: cover;"
@@ -135,7 +135,7 @@
                         Tin tức chung
                     {{/if}}
                 </span>
-                    <a href="/courses/{{this.slug}}" class="text-decoration-none text-dark">
+                    <a href="/articles/{{this.slug}}" class="text-decoration-none text-dark">
                         <h5 class="fw-bold card-title">
                             {{this.name}}
                         </h5>
@@ -143,7 +143,7 @@
                     <p class="text-muted card-text flex-grow-1">
                         {{this.description}}
                     </p>
-                    <a href="/courses/{{this.slug}}" class="btn btn-outline-danger rounded-pill">
+                    <a href="/articles/{{this.slug}}" class="btn btn-outline-danger rounded-pill">
                         Đọc bài viết
                     </a>
                 </div>
@@ -153,7 +153,7 @@
     </div>
 
     <!-- Empty state -->
-    {{#unless courses.length}}
+    {{#unless articles.length}}
     <div class="text-center py-5">
         <h3 class="fw-bold">
             Không tìm thấy bài viết

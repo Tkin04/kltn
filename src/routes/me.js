@@ -6,17 +6,17 @@ const roleMiddleware = require('../app/middlewares/roleMiddleware');
 
 const meController = require('../app/controllers/MeController');
 router.get(
- '/stored/courses',
+ '/stored/articles',
  authMiddleware,
  roleMiddleware(['admin']),
- meController.storedCourses
+ meController.storedArticles
 );
 
 router.get(
- '/trash/courses',
+ '/trash/articles',
  authMiddleware,
  roleMiddleware(['admin']),
- meController.trashCourses
+ meController.trashArticles
 );
 
 module.exports = router;

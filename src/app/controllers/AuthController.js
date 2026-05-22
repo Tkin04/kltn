@@ -5,112 +5,59 @@ class AuthController {
 
     // GET
     loginPage(req, res) {
-        res.render('auth/login');
+        res.render('auth/login', { title: 'Đăng nhập' });
     }
 
     registerPage(req, res) {
-        res.render('auth/register');
+        res.render('auth/register', { title: 'Đăng ký' });
     }
 
     // POST REGISTER
     async register(req, res) {
 
         try {
-
-            const {
-                username,
-                email,
-                password,
-            } = req.body;
+            const { username, email, password, } = req.body;
 
             // check username
-            const existingUsername =
-                await User.findOne({
-                    username
-                });
-
-            if (
-                existingUsername
-            ) {
-                return res.send(
-                    'Tên người dùng đã tồn tại'
-                );
+            const existingUsername = await User.findOne({ username });
+            if (existingUsername) {
+                return res.send( 'Tên người dùng đã tồn tại' );
             }
 
             // check email
-            const existingEmail =
-                await User.findOne({
-                    email
-                });
-
-            if (
-                existingEmail
-            ) {
-                return res.send(
-                    'Email đã tồn tại'
-                );
+            const existingEmail = await User.findOne({ email });
+            if (existingEmail) {
+                return res.send( 'Email đã tồn tại');
             }
-
-            const hashedPassword =
-                await bcrypt.hash(
-                    password,
-                    10
-                );
-
+            const hashedPassword = await bcrypt.hash(password,10);
             const user =
                 new User({
                     username,
                     email,
-                    password:
-                        hashedPassword,
+                    password: hashedPassword,
                 });
-
             await user.save();
-
-            res.redirect(
-                '/auth/login'
-            );
-
+            res.redirect('/auth/login');
         } catch (error) {
-
             console.log(error);
-
-            res.send(
-                'Register failed'
-            );
+            res.send('Register failed');
         }
     }
 
     // POST LOGIN
     async login(req, res) {
         try {
-
-            const {
-                email,
-                password,
-            } = req.body;
-
-            const user =
-                await User.findOne({
-                    email,
-                });
-
+            const { email, password } = req.body;
+            const user = await User.findOne({email,});
             if (!user) {
-                return res.send(
-                    'Sai email'
-                );
+                return res.send('Sai email');
             }
-
-            const isMatch =
-                await bcrypt.compare(
-                    password,
-                    user.password
-                );
-
+            const isMatch = await bcrypt.compare(
+                password,
+                user.password
+            );
             if (!isMatch) {
-                return res.send(
-                    'Sai mật khẩu'
-                );
+                return res.send('Sai mật khẩu');
             }
 
             // save session
@@ -120,40 +67,25 @@ class AuthController {
                     user.username,
                 role: user.role,
             };
-
             res.redirect('/');
-
         } catch (error) {
             console.log(error);
-            res.send(
-                'Login failed'
-            );
+            res.send('Login failed');
         }
     }
 
     // LOGOUT
     logout(req, res) {
-
         req.session.destroy(
             (err) => {
-
                 if (err) {
-                    return res.send(
-                        'Logout failed'
-                    );
+                    return res.send('Logout failed');
                 }
-
-                res.clearCookie(
-                    'connect.sid'
-                );
-
-                res.redirect(
-                    '/auth/login'
-                );
+                res.clearCookie('connect.sid');
+                res.redirect('/auth/login');
             }
         );
     }
 }
 
-module.exports =
-new AuthController();
+module.exports = new AuthController();

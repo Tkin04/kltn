@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
-
 const slugify = require('slugify');
-
 const mongooseDelete = require('mongoose-delete');
-
 const Schema = mongoose.Schema;
-
 const Post = new Schema(
     {
         // tiêu đề
@@ -45,9 +41,7 @@ const Post = new Schema(
             type:
             mongoose.Schema
             .Types.ObjectId,
-
             ref: 'User',
-
             required: true,
         },
 
@@ -58,8 +52,7 @@ const Post = new Schema(
                 'draft',
                 'published',
             ],
-            default:
-            'published',
+            default:'published',
         },
 
         // lượt xem
@@ -71,8 +64,7 @@ const Post = new Schema(
         // danh mục
         category: {
             type: String,
-            default:
-            'general',
+            default:'general',
         },
     },
     {
@@ -114,11 +106,9 @@ Post.pre(
 
 // SOFT DELETE
 Post.plugin( mongooseDelete, {
-        deletedAt:
-        true,
-        overrideMethods:
-        'all',
+        deletedAt: true,
+        overrideMethods: 'all',
     }
 );
 
-module.exports = mongoose.model('Course', Post);
+module.exports = mongoose.model('Article', Post);

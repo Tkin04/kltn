@@ -1,6 +1,6 @@
-<form class="mt-4" method="POST" action="/courses/handle-form-actions">
+<form class="mt-4" method="POST" action="/articles/handle-form-actions">
     <div>
-        <a href="/me/stored/courses">Quay lại</a>
+        <a href="/me/stored/articles">Quay lại</a>
         <h3>Bài viết đã xóa</h3>
         <div class="mt-4 d-flex align-items-center">
             <div class="form-check">
@@ -44,11 +44,11 @@
             </tr>
         </thead>
         <tbody>
-            {{#each courses}}
+            {{#each articles}}
             <tr>
                 <td>
                     <div class="form-check">
-                        <input class="form-check-input mt-0" type="checkbox" name="courseIds[]" value="{{this._id}}">
+                        <input class="form-check-input mt-0" type="checkbox" name="articleIds[]" value="{{this._id}}">
                     </div>
                 </td>
                 <th scope="row">{{sum @index 1}}</th>
@@ -63,7 +63,7 @@
             {{else}}
             <tr>
                 <td colspan="5" class="text-center">Thùng rác trống.
-                    <a href="/me/stored/courses">Quay lại</a>
+                    <a href="/me/stored/articles">Quay lại</a>
                 </td>
             </tr>
             {{/each}}
@@ -84,7 +84,7 @@
         <br>Bạn có chắc chắn muốn xóa bài viết này không?</p>
       </div>
       <div class="modal-footer">
-        <button id="btn-delete-course" type="button" class="btn btn-danger">Xóa bỏ vĩnh viễn</button>
+        <button id="btn-delete-article" type="button" class="btn btn-danger">Xóa bỏ vĩnh viễn</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
       </div>
     </div>
@@ -100,13 +100,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var courseId;
+    var articleId;
     var deleteForm = document.forms['delete-form'];
     var restoreForm = document.forms['restore-form'];
-    var btnDeleteCourse = document.getElementById('btn-delete-course');
+    var btnDeleteArticle = document.getElementById('btn-delete-article');
     var restoreBtn = document.querySelectorAll('.btn-restore');
     var checkboxAll = document.getElementById('checkbox-all');
-    var itemCheckboxes = document.querySelectorAll('input[name="courseIds[]"]');
+    var itemCheckboxes = document.querySelectorAll('input[name="articleIds[]"]');
     var checkAllSubmitBtn = document.querySelector('.check-all-submit-btn');
 
     const modal = document.getElementById('confirmDeleteModal');
@@ -117,12 +117,12 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
-            courseId = id;
+            articleId = id;
         });
 
 
-        btnDeleteCourse.addEventListener('click', function () {
-            deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
+        btnDeleteArticle.addEventListener('click', function () {
+            deleteForm.action = '/articles/' + articleId + '/force?_method=DELETE';
             deleteForm.submit();
         });
     }
@@ -130,10 +130,10 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
 
-            const courseId = this.getAttribute('data-id');
+            const articleId = this.getAttribute('data-id');
 
-            console.log('Restore:', courseId);
-            restoreForm.action = '/courses/' + courseId + '/restore?_method=PATCH';
+            console.log('Restore:', articleId);
+            restoreForm.action = '/articles/' + articleId + '/restore?_method=PATCH';
             restoreForm.submit();
         });
     });
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         itemCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', function () {
                 var total = itemCheckboxes.length;
-                var checked = document.querySelectorAll('input[name="courseIds[]"]:checked').length;
+                var checked = document.querySelectorAll('input[name="articleIds[]"]:checked').length;
                 checkboxAll.checked = total === checked;
 
                 renderCheckAllSubmitBtn();
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         // Cập nhật trạng thái nút "Áp dụng" khi có sự thay đổi ở các checkbox
         function renderCheckAllSubmitBtn() {
-            var checked = document.querySelectorAll('input[name="courseIds[]"]:checked').length;
+            var checked = document.querySelectorAll('input[name="articleIds[]"]:checked').length;
             checkAllSubmitBtn.classList.toggle('disabled', checked === 0);
         }
 });

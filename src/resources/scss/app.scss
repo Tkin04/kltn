@@ -11,3 +11,29 @@
     width: 120px;
     margin: 0 16px;
 }
+.nav-link {
+    white-space: nowrap;
+}
+.navbar {
+    padding: 18px 0;
+}
+.nav-link {
+    font-size: 0.95rem;
+    padding: 0 10px !important;
+}
+.auth-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+}
+.auth-buttons a {
+    min-width: 90px;
+    white-space: nowrap;
+}
+.search-form {
+    max-width: 260px;
+}
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: 700;
+}

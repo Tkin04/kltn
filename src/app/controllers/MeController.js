@@ -1,29 +1,29 @@
-const Course = require('../models/Course');
+const Article = require('../models/Article');
 const { multipleMongooseToObject } = require('../../util/mongoose')
 
 class MeController {
-    // [GET] /me/stored/courses
-    storedCourses(req, res, next) {
+    // [GET] /me/stored/articles
+    storedArticles(req, res, next) {
 
-        let courseQuery = Course.find({});
+        let articleQuery = Article.find({});
 
         if ('_sort' in req.query) {
-            courseQuery = courseQuery.sort({
+            articleQuery = articleQuery.sort({
                 [req.query.column]: req.query.type
             });
         }
 
         Promise.all([
-            courseQuery,
-            Course.countDocumentsDeleted(),
-            Course.countDocuments(),
-            Course.countDocuments({
+            articleQuery,
+            Article.countDocumentsDeleted(),
+            Article.countDocuments(),
+            Article.countDocuments({
                 status: 'published',
             }),
-            Course.countDocuments({
+            Article.countDocuments({
                 status: 'draft',
             }),
-            Course.aggregate([
+            Article.aggregate([
                 {
                     $group: {
                         _id: null,
@@ -34,26 +34,27 @@ class MeController {
                 },
             ]),
         ])
-        .then(([courses, deletedCount, totalCourses, publishedCount, draftCount, totalViews]) => {
+        .then(([articles, deletedCount, totalArticles, publishedCount, draftCount, totalViews]) => {
             res.locals.deletedCount = deletedCount;
-            res.render('me/stored-courses', { 
-                courses: multipleMongooseToObject(courses),
+            res.render('me/stored-articles', { 
+                articles: multipleMongooseToObject(articles),
                 analytics: {
-                    totalCourses,
+                    totalArticles,
                     publishedCount,
                     draftCount,
                     totalViews: totalViews[0]?.totalViews || 0,
                 },
+                title: 'Quản lý bài viết',
             });
         })
         .catch(next);
     }
 
-    // [GET] /me/trash/courses
-    trashCourses(req, res, next) {
-        Course.findDeleted({})
-            .then(courses => {
-                res.render('me/trash-courses', { courses: multipleMongooseToObject(courses) });
+    // [GET] /me/trash/articles
+    trashArticles(req, res, next) {
+        Article.findDeleted({})
+            .then(articles => {
+                res.render('me/trash-articles', { articles: multipleMongooseToObject(articles), title: 'Bài viết đã xóa' });
             })
             .catch(next);
 

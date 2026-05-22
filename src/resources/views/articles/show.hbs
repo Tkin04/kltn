@@ -3,44 +3,44 @@
         <div class="col-lg-9">
             <!-- Category -->
             <span class="badge bg-danger mb-3">
-                {{#if (eq course.category "transfer")}}
+                {{#if (eq article.category "transfer")}}
                     Chuyển nhượng
                 {{/if}}
 
-                {{#if (eq course.category "premier-league")}}
+                {{#if (eq article.category "premier-league")}}
                     Ngoại hạng Anh
                 {{/if}}
 
-                {{#if (eq course.category "champions-league")}}
+                {{#if (eq article.category "champions-league")}}
                     Champions League
                 {{/if}}
 
-                {{#if (eq course.category "laliga")}}
+                {{#if (eq article.category "laliga")}}
                     La Liga
                 {{/if}}
 
-                {{#if (eq course.category "serie-a")}}
+                {{#if (eq article.category "serie-a")}}
                     Serie A
                 {{/if}}
 
-                {{#if (eq course.category "bundesliga")}}
+                {{#if (eq article.category "bundesliga")}}
                     Bundesliga
                 {{/if}}
 
-                {{#if (eq course.category "general")}}
+                {{#if (eq article.category "general")}}
                     Tin tức chung
                 {{/if}}
             </span>
 
             <!-- Title -->
             <h1 class=" fw-bold display-5 mb-4 ">
-                {{course.name}}
+                {{article.name}}
             </h1>
 
             <!-- Meta -->
             <div class=" d-flex flex-wrap gap-3 text-muted border-bottom pb-3 mb-4 ">
                 <span>
-                    👁 {{course.views}}
+                    👁 {{article.views}}
                     lượt xem
                 </span>
                 <span>
@@ -48,45 +48,45 @@
                 </span>
                 <span>
                     📅
-                    {{formatDate course.createdAt}}
+                    {{formatDate article.createdAt}}
                 </span>
             </div>
             <!-- Thumbnail -->
-            {{#if course.image}}
+            {{#if article.image}}
             <img
-                src="{{#if course.image}}{{course.image}}{{else}}/img/default-news.jpg{{/if}}"
-                alt="{{course.name}}"
+                src="{{#if article.image}}{{article.image}}{{else}}/img/default-news.jpg{{/if}}"
+                alt="{{article.name}}"
                 class="img-fluid rounded-4 shadow-sm mb-5 w-100"
                 style="max-height: 500px; object-fit: cover;"
             >
             {{/if}}
 
             <!-- Description -->
-            {{#if course.description}}
+            {{#if article.description}}
             <div class=" bg-light rounded-4 p-4 mb-5 ">
                 <h5 class="fw-bold">
                     Tóm tắt
                 </h5>
                 <p class="mb-0">
-                    {{course.description}}
+                    {{article.description}}
                 </p>
             </div>
             {{/if}}
 
             <!-- Content -->
             <div class=" fs-5 lh-lg mb-5 ">
-                {{course.content}}
+                {{article.content}}
             </div>
 
             <!-- Related -->
-            {{#if relatedCourses.length}}
+            {{#if relatedArticles.length}}
             <section class="mt-5">
                 <h3 class="fw-bold mb-4">Tin liên quan</h3>
                 <div class="row g-4">
-                    {{#each relatedCourses}}
+                    {{#each relatedArticles}}
                     <div class="col-md-4">
                         <div class=" card h-100 border-0 shadow-sm rounded-4 overflow-hidden ">
-                            <a href="/courses/{{this.slug}}">
+                            <a href="/articles/{{this.slug}}">
                                 <img
                                     src="{{#if this.image}}{{this.image}}{{else}}/img/default-news.jpg{{/if}}"
                                     class="card-img-top"
@@ -121,7 +121,7 @@
                                 </span>                                
                                 <h6 class=" fw-bold ">
                                     <a
-                                        href="/courses/{{this.slug}}"
+                                        href="/articles/{{this.slug}}"
                                         class=" text-decoration-none text-dark "
                                     >
                                         {{this.name}}

@@ -5,11 +5,11 @@
         <div class="card-body">
 
             <h3 class="mb-4">
-                Tạo bài viết mới
+                Chỉnh sửa bài viết
             </h3>
 
             <form
-                action="/courses/store"
+                action="/articles/{{article._id}}?_method=PUT"
                 method="POST"
             >
 
@@ -28,7 +28,7 @@
                         class="form-control"
                         id="name"
                         name="name"
-                        placeholder="Nhập tiêu đề..."
+                        value="{{article.name}}"
                         required
                     >
                 </div>
@@ -48,12 +48,11 @@
                         id="description"
                         name="description"
                         rows="3"
-                        placeholder="Mô tả ngắn nội dung bài viết..."
-                    ></textarea>
+                    >{{article.description}}</textarea>
 
                 </div>
 
-                <!-- Ảnh -->
+                <!-- Thumbnail -->
                 <div class="mb-3">
 
                     <label
@@ -68,7 +67,7 @@
                         class="form-control"
                         id="image"
                         name="image"
-                        placeholder="https://..."
+                        value="{{article.image}}"
                     >
                 </div>
 
@@ -87,11 +86,11 @@
                         id="content"
                         name="content"
                         rows="8"
-                        placeholder="Nhập nội dung..."
-                    ></textarea>
+                    >{{article.content}}</textarea>
 
                 </div>
 
+                <!-- Danh mục -->
                 <!-- Category -->
                 <div class="mb-3">
 
@@ -140,7 +139,7 @@
 
                 </div>
 
-                <!-- Status -->
+                <!-- Trạng thái -->
                 <div class="mb-4">
 
                     <label
@@ -155,6 +154,7 @@
                         id="status"
                         name="status"
                     >
+
                         <option
                             value="published"
                         >
@@ -166,6 +166,7 @@
                         >
                             Nháp
                         </option>
+
                     </select>
                 </div>
 
@@ -173,7 +174,7 @@
                     type="submit"
                     class="btn btn-primary"
                 >
-                    Đăng bài viết
+                    Lưu thay đổi
                 </button>
 
             </form>

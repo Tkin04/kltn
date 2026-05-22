@@ -1,13 +1,13 @@
-<form name="container-form" method="POST" action="/courses/handle-form-actions" class="mt-4">
+<form name="container-form" method="POST" action="/articles/handle-form-actions" class="mt-4">
     <div>
         <h3>Bài viết đã đăng</h3>
-        <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a>
+        <a href="/me/trash/articles">Thùng rác ({{deletedCount}})</a>
         <div class="row mt-4 g-3">
             <div class="col-md-3">
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body">
                         <h6 class="text-muted">Tổng bài viết</h6>
-                        <h3 class="fw-bold mb-0">{{analytics.totalCourses}}</h3>
+                        <h3 class="fw-bold mb-0">{{analytics.totalArticles}}</h3>
                     </div>
                 </div>
             </div>
@@ -67,11 +67,11 @@
             </tr>
         </thead>
         <tbody>
-            {{#each courses}}
+            {{#each articles}}
             <tr>
                 <td>
                     <div class="form-check">
-                        <input class="form-check-input mt-0" type="checkbox" name="courseIds[]" value="{{this._id}}">
+                        <input class="form-check-input mt-0" type="checkbox" name="articleIds[]" value="{{this._id}}">
                     </div>
                 </td>
                 <th scope="row">{{sum @index 1}}</th>
@@ -86,14 +86,14 @@
                 </td>
                 <td>{{formatDate this.createdAt}}</td>
                 <td>
-                    <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
+                    <a href="/articles/{{this._id}}/edit" class="btn btn-link">Sửa</a>
                     <a href="" class="btn btn-link" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#confirmDeleteModal">Xóa</a>
                 </td>
             </tr>
             {{else}}
             <tr>
                 <td colspan="5" class="text-center">Không có bài viết nào.
-                    <a href="/courses/create">Đăng ngay.</a>
+                    <a href="/articles/create">Đăng ngay.</a>
                 </td>
             </tr>
             {{/each}}
@@ -113,7 +113,7 @@
         <p>Bạn có chắc chắn muốn xóa bài viết này không?</p>
       </div>
       <div class="modal-footer">
-        <button id="btn-delete-course" type="button" class="btn btn-danger">Xóa bỏ</button>
+        <button id="btn-delete-article" type="button" class="btn btn-danger">Xóa bỏ</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
       </div>
     </div>
@@ -126,12 +126,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var courseId;
+    var articleId;
     var deleteForm = document.forms['delete-form'];
     var containerForm = document.forms['container-form'];
-    var btnDeleteCourse = document.getElementById('btn-delete-course');
+    var btnDeleteArticle = document.getElementById('btn-delete-article');
     var checkboxAll = document.getElementById('checkbox-all');
-    var itemCheckboxes = document.querySelectorAll('input[name="courseIds[]"]');
+    var itemCheckboxes = document.querySelectorAll('input[name="articleIds[]"]');
     var checkAllSubmitBtn = document.querySelector('.check-all-submit-btn');
 
     const modal = document.getElementById('confirmDeleteModal');
@@ -142,12 +142,12 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
-            courseId = id;
+            articleId = id;
         });
 
         // Xử lý sự kiện click nút "Xóa bỏ" trong modal
-        btnDeleteCourse.addEventListener('click', function () {
-            deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+        btnDeleteArticle.addEventListener('click', function () {
+            deleteForm.action = '/articles/' + articleId + '?_method=DELETE';
             deleteForm.submit();
         });
         // Xử lý sự kiện chọn tất cả checkbox
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
         itemCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', function () {
                 var total = itemCheckboxes.length;
-                var checked = document.querySelectorAll('input[name="courseIds[]"]:checked').length;
+                var checked = document.querySelectorAll('input[name="articleIds[]"]:checked').length;
                 checkboxAll.checked = total === checked;
 
                 renderCheckAllSubmitBtn();
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         // Cập nhật trạng thái nút "Áp dụng" khi có sự thay đổi ở các checkbox
         function renderCheckAllSubmitBtn() {
-            var checked = document.querySelectorAll('input[name="courseIds[]"]:checked').length;
+            var checked = document.querySelectorAll('input[name="articleIds[]"]:checked').length;
             checkAllSubmitBtn.classList.toggle('disabled', checked === 0);
         }
     }

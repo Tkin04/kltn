@@ -1,60 +1,37 @@
-const Course = require('../models/Course');
+const Article = require('../models/Article');
 const slugify = require('slugify');
-const {
-    mongooseToObject,
-    multipleMongooseToObject
-} = require('../../util/mongoose');
+const { mongooseToObject, multipleMongooseToObject } = require('../../util/mongoose');
 
-class CourseController {
-    // [GET] /courses/:slug
+class ArticleController {
+    // [GET] /articles/:slug
     async show(req, res, next) {
         try {
 
-            const course =
-                await Course.findOne({
-                    slug:
-                    req.params.slug
-                });
+            const article =
+                await Article.findOne({slug: req.params.slug});
 
-            if (!course) {
+            if (!article) {
                 return res
                     .status(404)
-                    .send(
-                        'Không tìm thấy bài viết'
-                    );
+                    .send('Không tìm thấy bài viết');
             }
 
             // tăng view
-            await Course.updateOne(
-                {
-                    _id:
-                    course._id
-                },
-                {
-                    $inc: {
-                        views: 1
-                    }
-                }
-            );
+            await Article.updateOne( {_id: article._id}, {$inc: { views: 1} } );
 
             // bài liên quan
-            const relatedCourses =
-                await Course.find({
-                    category:
-                    course.category,
-
-                    _id: {
-                        $ne:
-                        course._id
-                    }
+            const relatedArticles =
+                await Article.find({
+                    category: article.category,
+                    _id: { $ne: article._id },
                 })
                 .limit(3);
 
-            res.render(
-                'courses/show',
+            res.render('articles/show',
                 {
-                    course: mongooseToObject(course),
-                    relatedCourses: multipleMongooseToObject(relatedCourses),
+                    article: mongooseToObject(article),
+                    relatedArticles: multipleMongooseToObject(relatedArticles),
+                    title: article.name,
                 }
             );
 
@@ -63,39 +40,39 @@ class CourseController {
         }
     }
 
-    // [GET] /courses/create
+    // [GET] /articles/create
     create(req, res, next) {
-        res.render('courses/create');
+        res.render('articles/create', { title: 'Đăng bài viết' });
     }
 
-    // [POST] /courses/store
+    // [POST] /articles/store
     store(req, res, next) {
         req.body.author = req.session.user._id;
-        const course = new Course(req.body);
-        course.save()
+        const article = new Article(req.body);
+        article.save()
             .then(() =>
-                res.redirect('/me/stored/courses')
+                res.redirect('/me/stored/articles')
             )
             .catch(next);
     }
-        // [GET] /courses/:id/edit
+        // [GET] /articles/:id/edit
     edit(req, res, next) {
-        Course.findOne({
+        Article.findOne({
             _id: req.params.id,
             author: req.session.user._id,
         })
-        .then(course => {
-            if (!course) {
+        .then(article => {
+            if (!article) {
                 return res
                     .status(403)
                     .send('Bạn không có quyền chỉnh sửa bài viết này');
             }
-            res.render('courses/edit',{course: mongooseToObject(course)});
+            res.render('articles/edit',{article: mongooseToObject(article), title: 'Chỉnh sửa bài viết'});
         })
         .catch(next);
     }
 
-    //[PUT] /courses/:id
+    //[PUT] /articles/:id
     update(req, res, next){
         req.body.slug = slugify(
             req.body.name,
@@ -104,11 +81,10 @@ class CourseController {
                 strict: true,
             }
         );
-        Course.updateOne(
+        Article.updateOne(
             {
                 _id: req.params.id,
-                author:
-                req.session.user._id,
+                author: req.session.user._id,
             },
             req.body
         )
@@ -120,14 +96,14 @@ class CourseController {
                 );
             }
 
-            res.redirect('/me/stored/courses');
+            res.redirect('/me/stored/articles');
         })
         .catch(next);
     }
 
-    //[DELETE] /courses/:id
+    //[DELETE] /articles/:id
     destroy(req, res, next){
-        Course.delete({
+        Article.delete({
             _id: req.params.id,
             author: req.session.user._id,
         })
@@ -137,41 +113,41 @@ class CourseController {
                     'Bạn không có quyền xóa bài viết này'
                 );
             }
-            res.redirect('/me/stored/courses');
+            res.redirect('/me/stored/articles');
         })
         .catch(next);
     }
 
-    //[DELETE] /courses/:id/force
+    //[DELETE] /articles/:id/force
     forcedestroy(req, res, next){
-        Course.deleteOne({
+        Article.deleteOne({
             _id: req.params.id,
             author: req.session.user._id,
         })
-            .then(() => res.redirect('/me/trash/courses'))
+            .then(() => res.redirect('/me/trash/articles'))
             .catch(next);
     }
 
-    //[PATCH] /courses/:id/restore
+    //[PATCH] /articles/:id/restore
     restore(req, res, next){
-        Course.restore({
+        Article.restore({
             _id: req.params.id,
             author: req.session.user._id,
         })
-            .then(() => res.redirect('/me/trash/courses'))
+            .then(() => res.redirect('/me/trash/articles'))
             .catch(next);
     }
     
-    //[POST] /courses/handle-form-actions
+    //[POST] /articles/handle-form-actions
     handleFormActions(req, res, next){
         switch(req.body.action){
             case 'delete':
-                Course.delete({
-                    _id: { $in: req.body.courseIds },
+                Article.delete({
+                    _id: { $in: req.body.articleIds },
                     author: req.session.user._id,
                 })
                     .then(result => {
-                        const selectedCount = req.body.courseIds.length;
+                        const selectedCount = req.body.articleIds.length;
                         const deletedCount = result.modifiedCount;
                         const deniedCount = selectedCount - deletedCount;
 
@@ -184,21 +160,21 @@ class CourseController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/stored/courses';
+                                    window.location = '/me/stored/articles';
                                 </script>
                             `);
                         }
-                        res.redirect('/me/stored/courses');
+                        res.redirect('/me/stored/articles');
                     })
                     .catch(next);
                 break;
             case 'restore':
-                Course.restore({
-                    _id: { $in: req.body.courseIds },
+                Article.restore({
+                    _id: { $in: req.body.articleIds },
                     author: req.session.user._id,
                 })
                     .then(result => {
-                        const selectedCount = req.body.courseIds.length;
+                        const selectedCount = req.body.articleIds.length;
                         const restoredCount = result.modifiedCount;
                         const deniedCount = selectedCount - restoredCount;
 
@@ -211,21 +187,21 @@ class CourseController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/trash/courses';
+                                    window.location = '/me/trash/articles';
                                 </script>
                             `);
                         }
-                        res.redirect('/me/trash/courses');
+                        res.redirect('/me/trash/articles');
                     })
                     .catch(next);
                 break;
             case 'force-delete':
-                Course.deleteMany({
-                    _id: { $in: req.body.courseIds },
+                Article.deleteMany({
+                    _id: { $in: req.body.articleIds },
                     author: req.session.user._id,
                 })
                     .then(result => {
-                        const selectedCount = req.body.courseIds.length;
+                        const selectedCount = req.body.articleIds.length;
                         const fdeletedCount = result.modifiedCount;
                         const deniedCount = selectedCount - fdeletedCount;
 
@@ -238,11 +214,11 @@ class CourseController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/stored/courses';
+                                    window.location = '/me/stored/articles';
                                 </script>
                             `);
                         }
-                        res.redirect('/me/stored/courses');
+                        res.redirect('/me/stored/articles');
                     })
                     .catch(next);
                 break;
@@ -252,4 +228,4 @@ class CourseController {
     }
 
 }
-module.exports = new CourseController();
+module.exports = new ArticleController();
