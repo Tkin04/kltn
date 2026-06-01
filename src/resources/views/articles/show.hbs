@@ -55,6 +55,7 @@
             {{#if article.image}}
             <img
                 src="{{#if article.image}}{{article.image}}{{else}}/img/default-news.jpg{{/if}}"
+                loading="lazy"
                 alt="{{article.name}}"
                 class="img-fluid rounded-4 shadow-sm mb-5 w-100"
                 style="max-height: 500px; object-fit: cover;"
@@ -75,7 +76,7 @@
 
             <!-- Content -->
             <div class=" fs-5 lh-lg mb-5 ">
-                {{article.content}}
+                {{{article.content}}}
             </div>
 
             <!-- Related -->

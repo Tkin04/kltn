@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../app/middlewares/AuthMiddleware');
 const roleMiddleware = require('../app/middlewares/RoleMiddleware');
+const upload = require('../app/middlewares/UploadMiddleware');
 
 const articleController = require('../app/controllers/ArticleController');
 router.get(
@@ -14,6 +15,7 @@ router.post(
     '/store',
     authMiddleware,
     roleMiddleware(['admin']),
+    upload.single('image'),
     articleController.store
 );
 router.get(
@@ -32,6 +34,7 @@ router.put(
     '/:id',
     authMiddleware,
     roleMiddleware(['admin']),
+    upload.single('image'),
     articleController.update
 );
 router.patch(

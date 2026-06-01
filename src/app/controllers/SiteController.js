@@ -66,6 +66,8 @@ class SiteController {
                 category,
                 heroTitle,
                 heroDescription,
+                metaDescription: heroDescription,
+                ogImage: '/img/logo.png',
                 title: search
                         ? `Tìm kiếm: ${search}`
                         : category

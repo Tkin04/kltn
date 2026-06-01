@@ -27,13 +27,13 @@ class ArticleController {
                 })
                 .limit(3);
 
-            res.render('articles/show',
-                {
-                    article: mongooseToObject(article),
-                    relatedArticles: multipleMongooseToObject(relatedArticles),
-                    title: article.name,
-                }
-            );
+        res.render('articles/show', {
+            article: mongooseToObject(article),
+            relatedArticles:multipleMongooseToObject(relatedArticles),
+            title: article.name,
+            metaDescription: article.description,
+            ogImage: article.image
+        });
 
         } catch (error) {
             next(error);
@@ -48,11 +48,12 @@ class ArticleController {
     // [POST] /articles/store
     store(req, res, next) {
         req.body.author = req.session.user._id;
+        if (req.file) {
+            req.body.image = `/uploads/${req.file.filename}`;
+        }
         const article = new Article(req.body);
         article.save()
-            .then(() =>
-                res.redirect('/me/stored/articles')
-            )
+            .then(() => res.redirect('/me/stored/articles'))
             .catch(next);
     }
         // [GET] /articles/:id/edit
@@ -73,32 +74,61 @@ class ArticleController {
     }
 
     //[PUT] /articles/:id
-    update(req, res, next){
-        req.body.slug = slugify(
-            req.body.name,
-            {
-                lower: true,
-                strict: true,
-            }
-        );
-        Article.updateOne(
-            {
-                _id: req.params.id,
-                author: req.session.user._id,
-            },
-            req.body
-        )
-        .then(result => {
+    async update(req, res, next) {
 
-            if (!result.matchedCount) {
+        req.body.slug =
+            slugify(
+                req.body.name,
+                {
+                    lower: true,
+                    strict: true,
+                }
+            );
+
+        try {
+
+            const article =
+                await Article.findOne({
+                    _id: req.params.id,
+                    author:
+                        req.session.user._id,
+                });
+
+            if (!article) {
                 return res.send(
                     'Bạn không có quyền chỉnh sửa bài viết này'
                 );
             }
 
-            res.redirect('/me/stored/articles');
-        })
-        .catch(next);
+            // có ảnh mới
+            if (req.file) {
+                req.body.image =
+                    '/uploads/' +
+                    req.file.filename;
+            }
+            // không có ảnh mới
+            else {
+                req.body.image =
+                    article.image;
+            }
+
+            await Article.updateOne(
+                {
+                    _id:
+                        req.params.id,
+                    author:
+                        req.session.user._id,
+                },
+                req.body
+            );
+
+            res.redirect(
+                '/me/stored/articles'
+            );
+
+        } catch (error) {
+            next(error);
+        }
     }
 
     //[DELETE] /articles/:id

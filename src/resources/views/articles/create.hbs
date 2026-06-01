@@ -11,6 +11,8 @@
             <form
                 action="/articles/store"
                 method="POST"
+                enctype="multipart/form-data"
+                novalidate
             >
 
                 <!-- Tiêu đề -->
@@ -29,7 +31,6 @@
                         id="name"
                         name="name"
                         placeholder="Nhập tiêu đề..."
-                        required
                     >
                 </div>
 
@@ -48,7 +49,6 @@
                         id="description"
                         name="description"
                         rows="3"
-                        placeholder="Mô tả ngắn nội dung bài viết..."
                     ></textarea>
 
                 </div>
@@ -64,12 +64,20 @@
                     </label>
 
                     <input
-                        type="text"
-                        class="form-control"
-                        id="image"
+                        type="file"
                         name="image"
-                        placeholder="https://..."
+                        class="form-control"
+                        accept=".jpg,.jpeg,.png,.webp"
                     >
+                    <img
+                        id="thumbnail-preview"
+                        src=""
+                        alt="Preview"
+                        style="
+                            max-width:300px;
+                                display:none;
+                                margin-top:10px;
+                                border-radius:8px;">
                 </div>
 
                 <!-- Nội dung -->
@@ -86,8 +94,7 @@
                         class="form-control"
                         id="content"
                         name="content"
-                        rows="8"
-                        placeholder="Nhập nội dung..."
+                        rows="10"
                     ></textarea>
 
                 </div>
@@ -182,3 +189,188 @@
     </div>
 
 </div>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+<script>
+const imageInput =
+document.querySelector(
+'input[name="image"]'
+);
+
+const preview =
+document.getElementById(
+'thumbnail-preview'
+);
+
+imageInput.addEventListener(
+'change',
+function () {
+
+    const file =
+    this.files[0];
+
+    if (!file) return;
+
+    preview.src =
+    URL.createObjectURL(
+        file
+    );
+
+    preview.style.display =
+    'block';
+});
+</script>
+
+<script>
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        let editor;
+
+        ClassicEditor
+            .create(
+                document.querySelector(
+                    '#content'
+                ),
+                {
+                    toolbar: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        '|',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'link',
+                        'insertTable',
+                        '|',
+                        'undo',
+                        'redo'
+                    ]
+                }
+            )
+            .then(newEditor => {
+
+                editor =
+                    newEditor;
+
+                const form =
+                    document.querySelector(
+                        'form[action="/articles/store"]'
+                    );
+
+                form.addEventListener(
+                    'submit',
+                    function (e) {
+
+                        e.preventDefault();
+
+                        editor.updateSourceElement();
+
+                        const title =
+                            document
+                                .getElementById('name')
+                                .value
+                                .trim();
+
+                        const description =
+                            document
+                                .getElementById('description')
+                                .value
+                                .trim();
+
+                        const image =
+                            document
+                                .querySelector(
+                                    'input[name="image"]'
+                                )
+                                .files[0];
+
+                        const rawContent =
+                            editor.getData();
+
+                        const parser =
+                            new DOMParser();
+
+                        const doc =
+                            parser.parseFromString(
+                                rawContent,
+                                'text/html'
+                            );
+
+                        const content =
+                            doc.body.textContent
+                                .replace(/\u00A0/g, '')
+                                .replace(/\s+/g, '')
+                                .trim();
+
+                        console.log(
+                            title,
+                            description,
+                            content
+                        );
+
+                        if (!title) {
+                            alert(
+                                'Vui lòng nhập tiêu đề'
+                            );
+                            return;
+                        }
+
+                        if (
+                            title.length < 5
+                        ) {
+                            alert(
+                                'Tiêu đề phải có ít nhất 5 ký tự'
+                            );
+                            return;
+                        }
+
+                        if (!description) {
+                            alert(
+                                'Vui lòng nhập mô tả'
+                            );
+                            return;
+                        }
+
+                        if (
+                            description.length < 10
+                        ) {
+                            alert(
+                                'Mô tả ngắn phải có ít nhất 10 ký tự'
+                            );
+                            return;
+                        }
+
+                        if (!image) {
+                            alert(
+                                'Vui lòng chọn ảnh'
+                            );
+                            return;
+                        }
+
+                        if (
+                            content.length === 0
+                        ) {
+                            alert(
+                                'Vui lòng nhập nội dung bài viết'
+                            );
+                            return;
+                        }
+
+                        this.submit();
+                    }
+                );
+            })
+            .catch(error => {
+                console.error(
+                    error
+                );
+            });
+    }
+);
+</script>
+
+
