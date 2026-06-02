@@ -31,35 +31,45 @@
                     Tin tức chung
                 {{/if}}
             </span>
-
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="/" class=" text-decoration-none">
+                            Trang chủ
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="/?category={{article.category}}" class="text-decoration-none">
+                            {{categoryName}}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{article.name}}
+                    </li>
+                </ol>
+            </nav>
             <!-- Title -->
             <h1 class=" fw-bold display-5 mb-4 ">
                 {{article.name}}
             </h1>
 
             <!-- Meta -->
-            <div class=" d-flex flex-wrap gap-3 text-muted border-bottom pb-3 mb-4 ">
-                <span>
-                    👁 {{article.views}}
-                    lượt xem
-                </span>
-                <span>
-                    📰 Football News
-                </span>
-                <span>
-                    📅
-                    {{formatDate article.createdAt}}
-                </span>
+            <div class=" d-flex flex-wrap gap-3 text-muted border-bottom pb-3 mb-4 " >
+                <span>👁{{article.views}} lượt xem</span>
+                <span>⏱{{readingTime}} phút đọc</span>
+                <span>📰 Football News</span>
+                <span>📅{{formatDate article.createdAt}}</span>
             </div>
+
             <!-- Thumbnail -->
             {{#if article.image}}
-            <img
-                src="{{#if article.image}}{{article.image}}{{else}}/img/default-news.jpg{{/if}}"
-                loading="lazy"
-                alt="{{article.name}}"
-                class="img-fluid rounded-4 shadow-sm mb-5 w-100"
-                style="max-height: 500px; object-fit: cover;"
-            >
+                <img
+                    src="{{article.image}}"
+                    loading="lazy"
+                    alt="{{article.name}}"
+                    class="img-fluid rounded-4 shadow-sm mb-5 w-100"
+                    style="height: auto;"
+                >
             {{/if}}
 
             <!-- Description -->
@@ -75,7 +85,7 @@
             {{/if}}
 
             <!-- Content -->
-            <div class=" fs-5 lh-lg mb-5 ">
+            <div class="article-content mb-5">
                 {{{article.content}}}
             </div>
 

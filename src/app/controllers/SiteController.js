@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const { multipleMongooseToObject,} = require('../../util/mongoose');
+const escapeRegex =(text) => text.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
 
 class SiteController {
     // [GET] /
@@ -11,16 +12,15 @@ class SiteController {
 
             // SEARCH
             if (search) {
+                const safeSearch = escapeRegex( search );
                 query.name = {
-                    $regex: search,
+                    $regex: safeSearch,
                     $options: 'i',
                 };
             }
 
             // CATEGORY
-            if (category) {
-                query.category = category;
-            }
+            if (category) { query.category = category; }
 
             const articles = await Article.find(query);
 
@@ -39,24 +39,25 @@ class SiteController {
                 general: 'Tin tức chung',
             };
 
-            let heroTitle =
-                'Cập nhật tin tức bóng đá nhanh nhất';
+            let heroTitle = 'Cập nhật tin tức bóng đá nhanh nhất';
 
-            let heroDescription =
-                'Tin tức nóng hổi, chuyển nhượng và diễn biến mới nhất từ thế giới bóng đá.';
+            let heroDescription = 'Tin tức nóng hổi, chuyển nhượng và diễn biến mới nhất từ thế giới bóng đá.';
 
             // SEARCH ưu tiên cao nhất
             if (search) {
                 heroTitle =
                     `Kết quả tìm kiếm: ${search}`;
-                heroDescription =
-                    `Các bài viết liên quan đến "${search}"`;
+                heroDescription = articles.length > 0
+                    ? `Tìm thấy ${articles.length} bài viết phù hợp với "${search}"`
+                    : `Không tìm thấy bài viết phù hợp với "${search}"`;
             }
 
             // CATEGORY
             else if (category) {
                 heroTitle = categoryMap[category]|| 'Tin tức bóng đá';
-                heroDescription =`Khám phá các bài viết thuộc chuyên mục ${heroTitle}`;
+                heroDescription = articles.length > 0
+                    ? `Có ${articles.length} bài viết thuộc chuyên mục ${heroTitle}`
+                    : `Hiện chưa có bài viết nào thuộc chuyên mục ${heroTitle}`;
             }
 
             res.render( 'home', {

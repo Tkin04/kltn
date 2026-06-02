@@ -1,4 +1,4 @@
-<form class="mt-4" method="POST" action="/articles/handle-form-actions">
+<form class="mt-4" method="POST" action="/articles/handle-form-actions?page={{pagination.page}}">
     <div>
         <a href="/me/stored/articles">Quay lại</a>
         <h3>Bài viết đã xóa</h3>
@@ -21,25 +21,14 @@
     </div>
     <table class="table mt-4">
         <thead>
+
             <tr>
 
                 <th scope="col"></th>
-
-                <th scope="col">
-                    #
-                </th>
-
-                <th scope="col">
-                    Tiêu đề
-                </th>
-
-                <th scope="col">
-                    Danh mục
-                </th>
-
-                <th scope="col" colspan="2">
-                    Ngày xóa
-                </th>
+                <th scope="col"> # </th>
+                <th scope="col"> Tiêu đề </th>
+                <th scope="col"> Danh mục </th>
+                <th scope="col" colspan="2"> Ngày xóa </th>
 
             </tr>
         </thead>
@@ -51,13 +40,13 @@
                         <input class="form-check-input mt-0" type="checkbox" name="articleIds[]" value="{{this._id}}">
                     </div>
                 </td>
-                <th scope="row">{{sum @index 1}}</th>
+                <th scope="row">{{sum ../startIndex (sum @index 1) }}</th>
                 <td>{{this.name}}</td>
                 <td>{{this.category}}</td>
                 <td>{{this.deletedAt}}</td>
                 <td>
-                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}">Khôi phục</a>
-                    <a href="" class="btn btn-link" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#confirmDeleteModal">Xóa vĩnh viễn</a>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}"data-page="{{../pagination.page}}">Khôi phục</a>
+                    <a href="" class="btn btn-link" data-bs-toggle="modal" data-id="{{this._id}}"data-page="{{../pagination.page}}" data-bs-target="#confirmDeleteModal">Xóa vĩnh viễn</a>
                 </td>
             </tr>
             {{else}}
@@ -69,6 +58,25 @@
             {{/each}}
         </tbody>
     </table>
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {{#if pagination.hasPrev}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{pagination.prevPage}}">← Trước</a>
+            </li>
+            {{/if}}
+            <li class="page-item active">
+                <span class="page-link">
+                    {{pagination.page}}
+                </span>
+            </li>
+            {{#if pagination.hasNext}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{pagination.nextPage}}">Sau →</a>
+            </li>
+            {{/if}}
+        </ul>
+    </nav>
 </form>
 
 {{!-- confirm delete modal --}}
@@ -92,15 +100,14 @@
 </div>
 
 {{!-- delete hidden form --}}
-<form name="delete-form" method="POST">
-</form>
+<form name="delete-form" method="POST"></form>
 {{!-- restore hidden form --}}
-<form name="restore-form" method="POST">
-</form>
+<form name="restore-form" method="POST"></form>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var articleId;
+    var currentPage;
     var deleteForm = document.forms['delete-form'];
     var restoreForm = document.forms['restore-form'];
     var btnDeleteArticle = document.getElementById('btn-delete-article');
@@ -113,16 +120,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (modal) {
 
-        
         modal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            articleId = id;
+            articleId = button.getAttribute('data-id');
+            currentPage = button.getAttribute('data-page');
         });
-
-
+        
         btnDeleteArticle.addEventListener('click', function () {
-            deleteForm.action = '/articles/' + articleId + '/force?_method=DELETE';
+            deleteForm.action = '/articles/' + articleId + '/force?_method=DELETE' + '&page=' + currentPage;
             deleteForm.submit();
         });
     }
@@ -131,9 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
 
             const articleId = this.getAttribute('data-id');
-
-            console.log('Restore:', articleId);
-            restoreForm.action = '/articles/' + articleId + '/restore?_method=PATCH';
+            const currentPage = this.getAttribute('data-page');
+            restoreForm.action = '/articles/' + articleId + '/restore?_method=PATCH' + '&page=' + currentPage;
             restoreForm.submit();
         });
     });

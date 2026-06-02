@@ -17,11 +17,7 @@
 
                 <!-- Tiêu đề -->
                 <div class="mb-3">
-
-                    <label
-                        for="name"
-                        class="form-label"
-                    >
+                    <label for="name" class="form-label" >
                         Tiêu đề bài viết
                     </label>
 
@@ -36,11 +32,7 @@
 
                 <!-- Mô tả -->
                 <div class="mb-3">
-
-                    <label
-                        for="description"
-                        class="form-label"
-                    >
+                    <label for="description" class="form-label" >
                         Mô tả ngắn
                     </label>
 
@@ -55,11 +47,7 @@
 
                 <!-- Ảnh -->
                 <div class="mb-3">
-
-                    <label
-                        for="image"
-                        class="form-label"
-                    >
+                    <label for="image" class="form-label" >
                         Link ảnh thumbnail
                     </label>
 
@@ -82,11 +70,7 @@
 
                 <!-- Nội dung -->
                 <div class="mb-3">
-
-                    <label
-                        for="content"
-                        class="form-label"
-                    >
+                    <label for="content" class="form-label" >
                         Nội dung bài viết
                     </label>
 
@@ -101,11 +85,7 @@
 
                 <!-- Category -->
                 <div class="mb-3">
-
-                    <label
-                        for="category"
-                        class="form-label"
-                    >
+                    <label for="category" class="form-label" >
                         Danh mục
                     </label>
 
@@ -114,46 +94,20 @@
                         id="category"
                         name="category"
                     >
-
-                        <option value="general">
-                            Tin tức chung
-                        </option>
-
-                        <option value="transfer">
-                            Chuyển nhượng
-                        </option>
-
-                        <option value="premier-league">
-                            Ngoại hạng Anh
-                        </option>
-
-                        <option value="champions-league">
-                            Champions League
-                        </option>
-
-                        <option value="laliga">
-                            La Liga
-                        </option>
-
-                        <option value="serie-a">
-                            Serie A
-                        </option>
-
-                        <option value="bundesliga">
-                            Bundesliga
-                        </option>
-
+                        <option value="general"> Tin tức chung </option>
+                        <option value="transfer"> Chuyển nhượng </option>
+                        <option value="premier-league"> Ngoại hạng Anh </option>
+                        <option value="champions-league"> Champions League </option>
+                        <option value="laliga"> La Liga </option>
+                        <option value="serie-a"> Serie A </option>
+                        <option value="bundesliga"> Bundesliga </option>
                     </select>
 
                 </div>
 
                 <!-- Status -->
                 <div class="mb-4">
-
-                    <label
-                        for="status"
-                        class="form-label"
-                    >
+                    <label for="status" class="form-label" >
                         Trạng thái
                     </label>
 
@@ -162,24 +116,12 @@
                         id="status"
                         name="status"
                     >
-                        <option
-                            value="published"
-                        >
-                            Công khai
-                        </option>
-
-                        <option
-                            value="draft"
-                        >
-                            Nháp
-                        </option>
+                        <option value="published" > Công khai </option>
+                        <option value="draft" > Nháp </option>
                     </select>
                 </div>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
+                <button type="submit" class="btn btn-primary" >
                     Đăng bài viết
                 </button>
 
@@ -192,183 +134,104 @@
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
 <script>
-const imageInput =
-document.querySelector(
-'input[name="image"]'
-);
+const imageInput = document.querySelector( 'input[name="image"]' );
 
-const preview =
-document.getElementById(
-'thumbnail-preview'
-);
+const preview = document.getElementById( 'thumbnail-preview' );
 
-imageInput.addEventListener(
-'change',
-function () {
-
-    const file =
-    this.files[0];
-
+imageInput.addEventListener( 'change', function () {
+    const file = this.files[0];
     if (!file) return;
-
-    preview.src =
-    URL.createObjectURL(
-        file
-    );
-
-    preview.style.display =
-    'block';
+    preview.src = URL.createObjectURL( file );
+    preview.style.display = 'block';
 });
 </script>
 
 <script>
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-
+document.addEventListener( 'DOMContentLoaded', function () {
         let editor;
 
-        ClassicEditor
-            .create(
-                document.querySelector(
-                    '#content'
-                ),
-                {
-                    toolbar: [
-                        'heading',
-                        '|',
-                        'bold',
-                        'italic',
-                        '|',
-                        'bulletedList',
-                        'numberedList',
-                        '|',
-                        'link',
-                        'insertTable',
-                        '|',
-                        'undo',
-                        'redo'
-                    ]
-                }
-            )
-            .then(newEditor => {
+        ClassicEditor.create(
+            document.querySelector( '#content' ),
+            {
+                toolbar: [
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'link',
+                    'insertTable',
+                    '|',
+                    'undo',
+                    'redo'
+                ]
+            }
+        )
+        .then(newEditor => {
+            editor = newEditor;
+            const form = document.querySelector( 'form[action="/articles/store"]' ); 
+            form.addEventListener( 'submit', function (e) {
+                    e.preventDefault();
 
-                editor =
-                    newEditor;
-
-                const form =
-                    document.querySelector(
-                        'form[action="/articles/store"]'
+                    editor.updateSourceElement();
+                    const title = document
+                            .getElementById('name')
+                            .value
+                            .trim();
+                    const description = document
+                            .getElementById('description')
+                            .value
+                            .trim();
+                    const image = document
+                            .querySelector(
+                                'input[name="image"]'
+                            )
+                            .files[0];
+                    const rawContent = editor.getData();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(
+                        rawContent,
+                        'text/html'
                     );
-
-                form.addEventListener(
-                    'submit',
-                    function (e) {
-
-                        e.preventDefault();
-
-                        editor.updateSourceElement();
-
-                        const title =
-                            document
-                                .getElementById('name')
-                                .value
-                                .trim();
-
-                        const description =
-                            document
-                                .getElementById('description')
-                                .value
-                                .trim();
-
-                        const image =
-                            document
-                                .querySelector(
-                                    'input[name="image"]'
-                                )
-                                .files[0];
-
-                        const rawContent =
-                            editor.getData();
-
-                        const parser =
-                            new DOMParser();
-
-                        const doc =
-                            parser.parseFromString(
-                                rawContent,
-                                'text/html'
-                            );
-
-                        const content =
-                            doc.body.textContent
-                                .replace(/\u00A0/g, '')
-                                .replace(/\s+/g, '')
-                                .trim();
-
-                        console.log(
-                            title,
-                            description,
-                            content
-                        );
-
-                        if (!title) {
-                            alert(
-                                'Vui lòng nhập tiêu đề'
-                            );
-                            return;
-                        }
-
-                        if (
-                            title.length < 5
-                        ) {
-                            alert(
-                                'Tiêu đề phải có ít nhất 5 ký tự'
-                            );
-                            return;
-                        }
-
-                        if (!description) {
-                            alert(
-                                'Vui lòng nhập mô tả'
-                            );
-                            return;
-                        }
-
-                        if (
-                            description.length < 10
-                        ) {
-                            alert(
-                                'Mô tả ngắn phải có ít nhất 10 ký tự'
-                            );
-                            return;
-                        }
-
-                        if (!image) {
-                            alert(
-                                'Vui lòng chọn ảnh'
-                            );
-                            return;
-                        }
-
-                        if (
-                            content.length === 0
-                        ) {
-                            alert(
-                                'Vui lòng nhập nội dung bài viết'
-                            );
-                            return;
-                        }
-
-                        this.submit();
+                    const content = doc.body.textContent
+                        .replace(/\u00A0/g, '')
+                        .replace(/\s+/g, '')
+                        .trim();
+                    if (!title) {
+                        alert('Vui lòng nhập tiêu đề');
+                        return;
                     }
-                );
-            })
-            .catch(error => {
-                console.error(
-                    error
-                );
-            });
+                    if ( title.length < 5 ) {
+                        alert('Tiêu đề phải có ít nhất 5 ký tự');
+                        return;
+                    }
+
+                    if (!description) {
+                        alert('Vui lòng nhập mô tả');
+                        return;
+                    }
+                    if (description.length < 10) {
+                        alert('Mô tả ngắn phải có ít nhất 10 ký tự');
+                        return;
+                    }
+
+                    if (!image) {
+                        alert('Vui lòng chọn ảnh');
+                        return;
+                    }
+                    if (content.length === 0) {
+                        alert('Vui lòng nhập nội dung bài viết');
+                        return;
+                    }
+
+                    this.submit();
+                }
+            );
+        })
+        .catch(error => { console.error(error); });
     }
 );
 </script>

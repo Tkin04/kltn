@@ -2,10 +2,7 @@
     <div class="container">
 
         <!-- Logo -->
-        <a
-            class="navbar-brand fw-bold fs-4 text-uppercase"
-            href="/"
-        >
+        <a class="navbar-brand fw-bold fs-4 text-uppercase" href="/" >
             ⚽ Football News
         </a>
 
@@ -19,55 +16,37 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div
-            class="collapse navbar-collapse"
-            id="navbarSupportedContent"
-        >
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" >
 
             <!-- Navigation -->
             <ul class="navbar-nav me-lg-4 flex-nowrap">
 
                 <li class="nav-item">
-                    <a
-                        class="nav-link {{#unless category}}active{{/unless}}"
-                        href="/"
-                    >
+                    <a class="nav-link {{#unless category}}active{{/unless}}" href="/" >
                         Trang chủ
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a
-                        class="nav-link {{#if (eq category "transfer")}}active{{/if}}"
-                        href="/?category=transfer"
-                    >
+                    <a class="nav-link {{#if (eq category "transfer")}}active{{/if}}" href="/?category=transfer" >
                         Chuyển nhượng
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a
-                        class="nav-link {{#if (eq category "premier-league")}}active{{/if}}"
-                        href="/?category=premier-league"
-                    >
+                    <a class="nav-link {{#if (eq category "premier-league")}}active{{/if}}" href="/?category=premier-league" >
                         Ngoại hạng Anh
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a
-                        class="nav-link {{#if (eq category "champions-league")}}active{{/if}}"
-                        href="/?category=champions-league"
-                    >
+                    <a class="nav-link {{#if (eq category "champions-league")}}active{{/if}}" href="/?category=champions-league" >
                         Champions League
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a
-                        class="nav-link {{#if (eq category "laliga")}}active{{/if}}"
-                        href="/?category=laliga"
-                    >
+                    <a class="nav-link {{#if (eq category "laliga")}}active{{/if}}" href="/?category=laliga" >
                         La Liga
                     </a>
                 </li>
@@ -98,11 +77,7 @@
                         name="category"
                         value="{{category}}"
                     />
-                    <button
-                        id="headerSearchBtn"
-                        class="btn btn-danger px-4"
-                        type="submit"
-                    >
+                    <button id="headerSearchBtn" class="btn btn-danger px-4" type="submit" >
                         Tìm
                     </button>
 
@@ -131,9 +106,7 @@
                             class="rounded-circle border"
                         >
 
-                        <span>
-                            {{user.username}}
-                        </span>
+                        <span> {{user.username}} </span>
 
                     </a>
 
@@ -142,19 +115,13 @@
                         {{#if (eq user.role "admin")}}
 
                         <li>
-                            <a
-                                class="dropdown-item"
-                                href="/articles/create"
-                            >
+                            <a class="dropdown-item" href="/articles/create" >
                                 Đăng bài viết
                             </a>
                         </li>
 
                         <li>
-                            <a
-                                class="dropdown-item"
-                                href="/me/stored/articles"
-                            >
+                            <a class="dropdown-item" href="/me/stored/articles" >
                                 Quản lý bài viết
                             </a>
                         </li>
@@ -166,10 +133,7 @@
                         {{/if}}
 
                         <li>
-                            <a
-                                class="dropdown-item text-danger"
-                                href="/auth/logout"
-                            >
+                            <a class="dropdown-item text-danger" href="/auth/logout" >
                                 Đăng xuất
                             </a>
                         </li>
@@ -181,19 +145,13 @@
                 {{else}}
 
                 <li class="nav-item">
-                    <a
-                        class="btn btn-outline-light me-2"
-                        href="/auth/login"
-                    >
+                    <a class="btn btn-outline-light me-2" href="/auth/login" >
                         Đăng nhập
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a
-                        class="btn btn-danger"
-                        href="/auth/register"
-                    >
+                    <a class="btn btn-danger" href="/auth/register" >
                         Đăng ký
                     </a>
                 </li>
@@ -206,25 +164,11 @@
     </div>
 </nav>
 <script>
-    const searchForm =
-        document.getElementById(
-            'searchForm'
-        );
-
-    searchForm.addEventListener(
-        'submit',
-        function () {
-
-            const categoryInput =
-                document.getElementById(
-                    'categoryInput'
-                );
-
-            if (
-                !categoryInput.value
-            ) {
-                categoryInput.remove();
-            }
+    const searchForm = document.getElementById( 'searchForm' );
+    searchForm.addEventListener( 'submit', function () {
+        const categoryInput = document.getElementById( 'categoryInput' ); 
+        if (!categoryInput.value) { 
+            categoryInput.remove();
         }
-    );
+    });
 </script>

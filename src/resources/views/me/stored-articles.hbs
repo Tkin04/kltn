@@ -1,4 +1,4 @@
-<form name="container-form" method="POST" action="/articles/handle-form-actions" class="mt-4">
+<form name="container-form" method="POST" action="/articles/handle-form-actions?page={{pagination.page}}" class="mt-4">
     <div>
         <h3>Bài viết đã đăng</h3>
         <a href="/me/trash/articles">Thùng rác ({{deletedCount}})</a>
@@ -74,7 +74,10 @@
                         <input class="form-check-input mt-0" type="checkbox" name="articleIds[]" value="{{this._id}}">
                     </div>
                 </td>
-                <th scope="row">{{sum @index 1}}</th>
+                <th scope="row">{{sum
+                    ../startIndex
+                    (sum @index 1)
+                }}</th>
                 <td>{{this.name}}</td>
                 <td>{{this.category}}</td>
                 <td>
@@ -86,8 +89,8 @@
                 </td>
                 <td>{{formatDate this.createdAt}}</td>
                 <td>
-                    <a href="/articles/{{this._id}}/edit" class="btn btn-link">Sửa</a>
-                    <a href="" class="btn btn-link" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#confirmDeleteModal">Xóa</a>
+                    <a href="/articles/{{this._id}}/edit?page={{../pagination.page}}" class="btn btn-link">Sửa</a>
+                    <a href="" class="btn btn-link" data-bs-toggle="modal" data-id="{{this._id}}"data-page="{{../pagination.page}}" data-bs-target="#confirmDeleteModal">Xóa</a>
                 </td>
             </tr>
             {{else}}
@@ -99,6 +102,25 @@
             {{/each}}
         </tbody>
     </table>
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {{#if pagination.hasPrev}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{pagination.prevPage}}">← Trước</a>
+            </li>
+            {{/if}}
+            <li class="page-item active">
+                <span class="page-link">
+                    {{pagination.page}}
+                </span>
+            </li>
+            {{#if pagination.hasNext}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{pagination.nextPage}}">Sau →</a>
+            </li>
+            {{/if}}
+        </ul>
+    </nav>
 </form>
 
 {{!-- confirm delete modal --}}
@@ -127,6 +149,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var articleId;
+    var currentPage;
     var deleteForm = document.forms['delete-form'];
     var containerForm = document.forms['container-form'];
     var btnDeleteArticle = document.getElementById('btn-delete-article');
@@ -141,13 +164,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Xử lý sự kiện khi modal được hiển thị
         modal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-            const id = button.getAttribute('data-id');
-            articleId = id;
+            articleId = button.getAttribute('data-id');
+            currentPage = button.getAttribute('data-page');
         });
 
         // Xử lý sự kiện click nút "Xóa bỏ" trong modal
         btnDeleteArticle.addEventListener('click', function () {
-            deleteForm.action = '/articles/' + articleId + '?_method=DELETE';
+            deleteForm.action = '/articles/' + articleId + '?_method=DELETE' + '&page=' + currentPage;
             deleteForm.submit();
         });
         // Xử lý sự kiện chọn tất cả checkbox
@@ -174,6 +197,5 @@ document.addEventListener('DOMContentLoaded', function () {
             checkAllSubmitBtn.classList.toggle('disabled', checked === 0);
         }
     }
-    {{!-- console.log(containerForm); --}}
 });
 </script>

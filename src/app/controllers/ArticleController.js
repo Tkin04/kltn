@@ -6,10 +6,11 @@ class ArticleController {
     // [GET] /articles/:slug
     async show(req, res, next) {
         try {
-
-            const article =
-                await Article.findOne({slug: req.params.slug});
-
+            const article = await Article.findOne({
+                slug: req.params.slug,
+                status: 'published',
+                deleted: false,
+            });
             if (!article) {
                 return res
                     .status(404)
@@ -23,18 +24,43 @@ class ArticleController {
             const relatedArticles =
                 await Article.find({
                     category: article.category,
+                    status: 'published',
+                    deleted: false,
                     _id: { $ne: article._id },
                 })
+                .sort({views: -1,})
                 .limit(3);
 
-        res.render('articles/show', {
-            article: mongooseToObject(article),
-            relatedArticles:multipleMongooseToObject(relatedArticles),
-            title: article.name,
-            metaDescription: article.description,
-            ogImage: article.image
-        });
+            const plainText = article.content.replace( /<[^>]*>/g, ' ' ).trim();
 
+            const wordCount =
+                plainText
+                    .split(/\s+/)
+                    .filter(Boolean)
+                    .length;
+
+            const readingTime = Math.max( 1, Math.ceil( wordCount / 200 ));
+            const categoryMap = {
+                premierleague:'Premier League',
+                laliga:'La Liga',
+                bundesliga:'Bundesliga',
+                seriea:'Serie A',
+                ligue1:'Ligue 1',
+                transfer:'Chuyển nhượng',
+                vietnam:'Bóng đá Việt Nam',
+                general:'Tin tức',
+            };
+
+            const categoryName = categoryMap[ article.category ] || 'Tin tức';
+            res.render('articles/show', {
+                article: mongooseToObject(article),
+                relatedArticles:multipleMongooseToObject(relatedArticles),
+                title: article.name,
+                metaDescription: article.description,
+                ogImage: article.image,
+                readingTime,
+                categoryName,
+            });
         } catch (error) {
             next(error);
         }
@@ -58,6 +84,17 @@ class ArticleController {
     }
         // [GET] /articles/:id/edit
     edit(req, res, next) {
+        const mongoose = require('mongoose');
+        if (
+            !mongoose.Types
+                .ObjectId
+                .isValid( req.params.id )
+        ) {
+            return res
+                .status(404)
+                .send('Không tìm thấy bài viết');
+        }
+        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
         Article.findOne({
             _id: req.params.id,
             author: req.session.user._id,
@@ -68,31 +105,27 @@ class ArticleController {
                     .status(403)
                     .send('Bạn không có quyền chỉnh sửa bài viết này');
             }
-            res.render('articles/edit',{article: mongooseToObject(article), title: 'Chỉnh sửa bài viết'});
+            res.render('articles/edit',{
+                article: mongooseToObject(article),
+                title: 'Chỉnh sửa bài viết',
+                page,
+            });
         })
         .catch(next);
     }
 
     //[PUT] /articles/:id
     async update(req, res, next) {
-
-        req.body.slug =
-            slugify(
-                req.body.name,
-                {
-                    lower: true,
-                    strict: true,
-                }
-            );
+        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
+        req.body.slug = slugify( req.body.name, { lower: true, strict: true, }
+        );
 
         try {
-
-            const article =
-                await Article.findOne({
-                    _id: req.params.id,
-                    author:
-                        req.session.user._id,
-                });
+            const article = await Article.findOne({
+                _id: req.params.id,
+                author:
+                    req.session.user._id,
+            });
 
             if (!article) {
                 return res.send(
@@ -114,18 +147,13 @@ class ArticleController {
 
             await Article.updateOne(
                 {
-                    _id:
-                        req.params.id,
-                    author:
-                        req.session.user._id,
+                    _id: req.params.id,
+                    author: req.session.user._id,
                 },
                 req.body
             );
 
-            res.redirect(
-                '/me/stored/articles'
-            );
-
+            res.redirect(`/me/stored/articles?page=${page}`);
         } catch (error) {
             next(error);
         }
@@ -133,43 +161,45 @@ class ArticleController {
 
     //[DELETE] /articles/:id
     destroy(req, res, next){
+        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
         Article.delete({
             _id: req.params.id,
             author: req.session.user._id,
         })
         .then(result => {
             if (!result.modifiedCount) {
-                return res.send(
-                    'Bạn không có quyền xóa bài viết này'
-                );
+                return res.send( 'Bạn không có quyền xóa bài viết này' );
             }
-            res.redirect('/me/stored/articles');
+            res.redirect(`/me/stored/articles?page=${page}`);
         })
         .catch(next);
     }
 
     //[DELETE] /articles/:id/force
     forcedestroy(req, res, next){
+        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
         Article.deleteOne({
             _id: req.params.id,
             author: req.session.user._id,
         })
-            .then(() => res.redirect('/me/trash/articles'))
+            .then(() => res.redirect(`/me/trash/articles?page=${page}`))
             .catch(next);
     }
 
     //[PATCH] /articles/:id/restore
     restore(req, res, next){
+        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
         Article.restore({
             _id: req.params.id,
             author: req.session.user._id,
         })
-            .then(() => res.redirect('/me/trash/articles'))
+            .then(() => res.redirect(`/me/trash/articles?page=${page}`))
             .catch(next);
     }
     
     //[POST] /articles/handle-form-actions
     handleFormActions(req, res, next){
+        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
         switch(req.body.action){
             case 'delete':
                 Article.delete({
@@ -190,11 +220,11 @@ class ArticleController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/stored/articles';
+                                    window.location = '/me/stored/articles?page=${page}';
                                 </script>
                             `);
                         }
-                        res.redirect('/me/stored/articles');
+                        res.redirect(`/me/stored/articles?page=${page}`);
                     })
                     .catch(next);
                 break;
@@ -217,11 +247,11 @@ class ArticleController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/trash/articles';
+                                    window.location = '/me/trash/articles?page=${page}'';
                                 </script>
                             `);
                         }
-                        res.redirect('/me/trash/articles');
+                        res.redirect(`/me/trash/articles?page=${page}`);
                     })
                     .catch(next);
                 break;
@@ -244,11 +274,11 @@ class ArticleController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/stored/articles';
+                                    window.location = '/me/stored/articles?page=${page}';
                                 </script>
                             `);
                         }
-                        res.redirect('/me/stored/articles');
+                        res.redirect(`/me/stored/articles?page=${page}`);
                     })
                     .catch(next);
                 break;
@@ -256,6 +286,6 @@ class ArticleController {
                 res.json({ message: 'Hành động không hợp lệ!' });
         }
     }
-
+    
 }
 module.exports = new ArticleController();

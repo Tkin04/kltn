@@ -1,75 +1,87 @@
-<footer class="bg-dark text-light mt-5 pt-5 pb-4">
-
+<footer class="bg-dark text-light mt-5 pt-4 pb-3">
     <div class="container">
 
         <div class="row gy-4">
-
+            <!-- Brand -->
             <div class="col-lg-5">
 
-                <h4 class="fw-bold">
-                    ⚽ Football News
+                <h4 class="fw-bold mb-3">
+                    <a href="/" class=" text-white text-decoration-none footer-brand ">
+                        ⚽ Football News
+                    </a>
                 </h4>
 
-                <p class="text-secondary mb-0">
+                <p class="text-secondary mb-3">
                     Nền tảng cập nhật tin tức bóng đá nhanh chóng,
                     chính xác và liên tục từ các giải đấu hàng đầu thế giới.
                 </p>
 
+                <small class="text-secondary">
+                    Tin tức bóng đá • Chuyển nhượng •
+                    Champions League • La Liga
+                </small>
+
             </div>
 
+            <!-- Categories -->
             <div class="col-lg-3">
 
-                <h6 class="fw-bold mb-3">
-                    Chuyên mục
-                </h6>
+                <h6 class="fw-bold mb-3"> Chuyên mục </h6>
 
-                <ul class="list-unstyled">
+                <ul class="list-unstyled d-flex flex-column gap-2">
 
                     <li>
-                        <a
-                            href="/"
-                            class="text-secondary text-decoration-none"
-                        >
+                        <a href="/" class="text-secondary text-decoration-none footer-link">
                             Tin mới
                         </a>
                     </li>
 
                     <li>
-                        <a
-                            href="#"
-                            class="text-secondary text-decoration-none"
-                        >
+                        <a href="/?category=transfer" class="text-secondary text-decoration-none footer-link">
                             Chuyển nhượng
                         </a>
                     </li>
 
                     <li>
-                        <a
-                            href="#"
-                            class="text-secondary text-decoration-none"
-                        >
+                        <a href="/?category=champions-league" class="text-secondary text-decoration-none footer-link">
                             Champions League
                         </a>
                     </li>
 
+                    <li>
+                        <a href="/?category=laliga" class="text-secondary text-decoration-none footer-link">
+                            La Liga
+                        </a>
+                    </li>
                 </ul>
 
             </div>
 
+            <!-- About -->
             <div class="col-lg-4 text-lg-end">
 
-                <h6 class="fw-bold mb-3">
-                    Football News
-                </h6>
+                <h6 class="fw-bold mb-3"> Football News </h6>
 
-                <p class="text-secondary mb-0">
-                    © 2026 All Rights Reserved
+                <p class="text-secondary mb-2">
+                    Website cập nhật tin tức bóng đá
+                    với giao diện thân thiện và
+                    trải nghiệm đọc tối ưu.
                 </p>
 
+                <small class="text-secondary">
+                    © 2026 Football News.
+                    Phát triển cho đồ án KLTN.
+                </small>
             </div>
 
         </div>
 
+        <hr class="border-secondary my-4">
+
+        <div class=" d-flex flex-column flex-md-row justify-content-between align-items-center text-secondary small ">
+            <span> Football News • Updated Daily </span>
+            <span> Built with Node.js • Express • MongoDB </span>
+        </div>
     </div>
 
 </footer>

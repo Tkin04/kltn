@@ -1,6 +1,6 @@
 <div class="container py-4">
     <!-- Hero -->
-    <div class="bg-dark text-light rounded-4 p-5 mb-5 shadow">
+    <div class="hero-news text-light mb-5">
         <div class="row align-items-center">
             <div class="col-lg-8">
                 <span class="badge bg-danger mb-3">
@@ -16,6 +16,7 @@
         </div>
     </div>
     <!-- Top viewed -->
+    {{#unless search}}
     <div class="mb-5">
         <div class="d-flex align-items-center mb-4">
             <h2 class="fw-bold mb-0">
@@ -25,7 +26,7 @@
         <div class="row g-3">
             {{#each topViewedArticles}}
             <div class="col-md-6 col-lg-4">
-                <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card news-card shadow-sm h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <span class="badge bg-danger">
@@ -78,12 +79,17 @@
             {{/each}}
         </div>
     </div>
+    {{/unless}}
 
     <!-- Section title -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1">
-                Tin tức mới nhất
+                {{#if search}}
+                    Kết quả phù hợp
+                {{else}}
+                    Tin tức mới nhất
+                {{/if}}
             </h2>
             <p class="text-muted mb-0">
                 Có {{articles.length}} bài viết
@@ -97,15 +103,14 @@
         <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                 <a href="/articles/{{this.slug}}">
-                    <img class="card-img-top"
-                        src="{{#if this.image}}{{this.image}}{{else}}/img/default-news.jpg{{/if}}" alt="{{this.name}}"
-                        style="height: 240px; object-fit: cover;"
+                    <img class="card-img-top news-thumbnail"
+                        src="{{#if this.image}}{{this.image}}{{else}}/img/default-news.jpg{{/if}}"
+                        alt="{{this.name}}"
                     >
+
                 </a>
                 <div class="card-body d-flex flex-column">
-                <span
-                    class="badge bg-danger align-self-start mb-2"
-                >
+                <span class="badge bg-danger align-self-start mb-2" >
                     {{#if (eq this.category "transfer")}}
                         Chuyển nhượng
                     {{/if}}
@@ -154,12 +159,35 @@
     <!-- Empty state -->
     {{#unless articles.length}}
     <div class="text-center py-5">
-        <h3 class="fw-bold">
-            Không tìm thấy bài viết
+
+        <div
+            class="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle bg-light shadow-sm"
+            style="
+                width: 100px;
+                height: 100px;
+                font-size: 42px;
+            "
+        >
+            <div class="empty-icon mb-4" >
+                <i class="bi bi-search"></i>
+            </div>
+        </div>
+
+        <h3 class="fw-bold mb-3">
+            Không tìm thấy bài viết phù hợp
         </h3>
-        <p class="text-muted">
-            Không có kết quả phù hợp với từ khóa tìm kiếm.
+
+        <p class="text-muted mb-4">
+            Thử từ khóa khác hoặc quay lại trang chủ để xem các bài viết mới nhất.
         </p>
+
+        <a
+            href="/"
+            class="btn btn-danger rounded-pill px-4"
+        >
+            Xem tất cả bài viết
+        </a>
+
     </div>
     {{/unless}}
 </div>
