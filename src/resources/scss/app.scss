@@ -214,3 +214,104 @@
     opacity: .9;
     transform: scale(1.02);
 }
+.ck-content .image {
+    margin: 1rem 0;
+}
+
+.ck-content .image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.ck-content .image-style-align-left {
+    float: left;
+    margin-right: 20px;
+    max-width: 50%;
+}
+
+.ck-content .image-style-align-right {
+    float: right;
+    margin-left: 20px;
+    max-width: 50%;
+}
+
+.ck-content .image-style-block-align-center {
+    text-align: center;
+}
+
+.ck-content::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.article-content th,
+.article-content td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.article-content tr:nth-child(even) {
+    background: #f5f5f5;
+}
+
+.article-content {
+    overflow-x: hidden;
+}
+
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+}
+
+.article-content th,
+.article-content td {
+    border: 1px solid #ddd;
+    padding: 10px 14px;
+    min-width: 120px;
+    text-align: left;
+}
+.article-content table::-webkit-scrollbar {
+    height: 6px;
+}
+
+.article-content table::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.article-content figure.image {
+    margin: 24px 0;
+    text-align: center;
+}
+
+.article-content figure.image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.article-content figure.image {
+    margin: 20px 0;
+}
+
+.article-content figure.image figcaption {
+    margin-top: -15px;
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+    text-align: center;
+}

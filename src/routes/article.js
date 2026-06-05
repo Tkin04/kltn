@@ -55,6 +55,13 @@ router.delete(
     roleMiddleware(['admin']),
     articleController.forcedestroy
 );
+router.post(
+    '/upload-editor-image',
+    authMiddleware,
+    roleMiddleware(['admin']),
+    upload.single('upload'),
+    articleController.uploadEditorImage
+);
 router.get(
     '/:slug',
     articleController.show

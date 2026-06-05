@@ -148,92 +148,234 @@ imageInput.addEventListener( 'change', function () {
 
 <script>
 document.addEventListener( 'DOMContentLoaded', function () {
-        let editor;
+    let editor;
 
-        ClassicEditor.create(
-            document.querySelector( '#content' ),
-            {
-                toolbar: [
-                    'heading',
-                    '|',
-                    'bold',
-                    'italic',
-                    '|',
-                    'bulletedList',
-                    'numberedList',
-                    '|',
-                    'link',
-                    'insertTable',
-                    '|',
-                    'undo',
-                    'redo'
-                ]
-            }
-        )
-        .then(newEditor => {
+    const DRAFT_KEY = 'article_create_draft';
+
+    const saveDraft = () => {
+    if (!editor) return;
+
+    const draft = {
+        title:
+            document
+                .getElementById('name')
+                .value,
+
+        description:
+            document
+                .getElementById(
+                    'description'
+                )
+                .value,
+
+        category:
+            document.querySelector(
+                'select[name="category"]'
+            ).value,
+
+        content:
+            editor.getData(),
+
+        updatedAt:
+            Date.now()
+    };
+
+    localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify(draft)
+    );
+    };
+
+    ClassicEditor.create(
+    document.querySelector( '#content' ),
+    {
+        toolbar: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'link',
+            'insertTable',
+            '|',
+            'undo',
+            'redo'
+        ],
+
+        simpleUpload: {
+            uploadUrl:
+                '/articles/upload-editor-image'
+        }
+    }
+    )
+    .then(newEditor => { 
             editor = newEditor;
+
+            const savedDraft = localStorage.getItem(
+                DRAFT_KEY
+            );
+
+            if (savedDraft) {
+
+                const shouldRestore =
+                    confirm(
+                        'Phát hiện bản nháp chưa đăng.\nBạn có muốn khôi phục không?'
+                    );
+
+                if (shouldRestore) {
+
+                    const draft =
+                        JSON.parse(savedDraft);
+
+                    document
+                        .getElementById('name')
+                        .value =
+                            draft.title || '';
+
+                    document
+                        .getElementById(
+                            'description'
+                        )
+                        .value =
+                            draft.description || '';
+
+                    const categoryEl =
+                        document.querySelector(
+                            'select[name="category"]'
+                        );
+
+                    if (
+                        categoryEl &&
+                        draft.category
+                    ) {
+                        categoryEl.value =
+                            draft.category;
+                    }
+
+                    if (draft.content) {
+                        editor.setData(
+                            draft.content
+                        );
+                    }
+                }
+            }
+            setInterval(
+                saveDraft,
+                2000
+            );
+
             const form = document.querySelector( 'form[action="/articles/store"]' ); 
-            form.addEventListener( 'submit', function (e) {
+
+            form.addEventListener(
+                'submit',
+                function (e) {
                     e.preventDefault();
 
                     editor.updateSourceElement();
+
                     const title = document
-                            .getElementById('name')
-                            .value
-                            .trim();
-                    const description = document
-                            .getElementById('description')
-                            .value
-                            .trim();
-                    const image = document
-                            .querySelector(
-                                'input[name="image"]'
-                            )
-                            .files[0];
-                    const rawContent = editor.getData();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(
-                        rawContent,
-                        'text/html'
-                    );
-                    const content = doc.body.textContent
-                        .replace(/\u00A0/g, '')
-                        .replace(/\s+/g, '')
+                        .getElementById('name')
+                        .value
                         .trim();
+
+                    const description = document
+                        .getElementById('description')
+                        .value
+                        .trim();
+
+                    const image = document
+                        .querySelector(
+                            'input[name="image"]'
+                        )
+                        .files[0];
+
+                    const rawContent =
+                        editor.getData();
+
+                    const parser =
+                        new DOMParser();
+
+                    const doc =
+                        parser.parseFromString(
+                            rawContent,
+                            'text/html'
+                        );
+
+                    const content =
+                        doc.body.textContent
+                            .replace(
+                                /\u00A0/g,
+                                ''
+                            )
+                            .replace(
+                                /\s+/g,
+                                ''
+                            )
+                            .trim();
+
                     if (!title) {
-                        alert('Vui lòng nhập tiêu đề');
+                        alert(
+                            'Vui lòng nhập tiêu đề'
+                        );
                         return;
                     }
-                    if ( title.length < 5 ) {
-                        alert('Tiêu đề phải có ít nhất 5 ký tự');
+
+                    if (title.length < 5) {
+                        alert(
+                            'Tiêu đề phải có ít nhất 5 ký tự'
+                        );
                         return;
                     }
 
                     if (!description) {
-                        alert('Vui lòng nhập mô tả');
+                        alert(
+                            'Vui lòng nhập mô tả'
+                        );
                         return;
                     }
-                    if (description.length < 10) {
-                        alert('Mô tả ngắn phải có ít nhất 10 ký tự');
+
+                    if (
+                        description.length < 10
+                    ) {
+                        alert(
+                            'Mô tả ngắn phải có ít nhất 10 ký tự'
+                        );
                         return;
                     }
 
                     if (!image) {
-                        alert('Vui lòng chọn ảnh');
+                        alert(
+                            'Vui lòng chọn ảnh'
+                        );
                         return;
                     }
-                    if (content.length === 0) {
-                        alert('Vui lòng nhập nội dung bài viết');
+
+                    if (
+                        content.length === 0
+                    ) {
+                        alert(
+                            'Vui lòng nhập nội dung bài viết'
+                        );
                         return;
                     }
+
+                    localStorage.removeItem(
+                        DRAFT_KEY
+                    );
 
                     this.submit();
                 }
             );
+
         })
-        .catch(error => { console.error(error); });
-    }
-);
+        .catch(error => {
+            console.error(error);
+        });
+
+    });
 </script>
 
 

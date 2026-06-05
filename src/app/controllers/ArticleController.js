@@ -82,7 +82,27 @@ class ArticleController {
             .then(() => res.redirect('/me/stored/articles'))
             .catch(next);
     }
-        // [GET] /articles/:id/edit
+
+    // [POST] /articles/upload-editor-image
+    uploadEditorImage(req, res, next) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({
+                    error: {
+                        message: 'Không có ảnh upload'
+                    }
+                });
+            }
+
+            res.status(200).json({
+                url: `/uploads/${req.file.filename}`
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // [GET] /articles/:id/edit
     edit(req, res, next) {
         const mongoose = require('mongoose');
         if (
