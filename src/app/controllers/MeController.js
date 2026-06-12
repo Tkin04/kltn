@@ -9,20 +9,51 @@ class MeController {
         const limit = 5;
         const startIndex = (page - 1) * limit;
         const skip = (page - 1) * limit;
+        const search = req.query.search?.trim() || '';
+        let queryFilter = {};
 
-        let articleQuery = Article.find({});
+        const escapedSearch =
+            search.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                '\\$&'
+            );
+        if (search) {
+            queryFilter = {
+                $or: [
+                    {
+                        name: { $regex: escapedSearch, $options: 'i', },
+                    },
+                    {
+                        description: { $regex: escapedSearch, $options: 'i', },
+                    },
+                ],
+            };
+        }
+console.log(
+    'search:',
+    search
+);
 
-        if ('_sort' in req.query) {
-            articleQuery = articleQuery.sort({ [req.query.column]: req.query.type});
+console.log(
+    'queryFilter:',
+    queryFilter
+);
+        let articleQuery = Article.find( queryFilter );
+
+        if ( req.query.column && req.query.type ) {
+            articleQuery = articleQuery.sort({ [req.query.column]: req.query.type });
         }
 
         articleQuery = articleQuery
             .skip(skip)
             .limit(limit);
+console.log(
+    'query executing'
+);
         Promise.all([
             articleQuery,
             Article.countDocumentsDeleted(),
-            Article.countDocuments(),
+            Article.countDocuments( queryFilter ),
             Article.countDocuments({
                 status: 'published',
             }),
@@ -54,7 +85,7 @@ class MeController {
                         totalArticles,
                         publishedCount,
                         draftCount,
-                        totalViews: totalViews[0] ?.totalViews || 0,
+                        totalViews: totalViews[0]?.totalViews || 0,
                     },
                     pagination: {
                         page,
@@ -64,6 +95,17 @@ class MeController {
                         prevPage: page - 1,
                         nextPage: page + 1,
                     },
+                    sortQuery:
+                        req.query.column &&
+                        req.query.type
+                            ? `_sort&column=${req.query.column}&type=${req.query.type}&`
+                            : '',
+
+                    searchQuery:
+                        search
+                            ? `search=${encodeURIComponent(search)}&`
+                            : '',
+                    search,
                     startIndex,
                     title: 'Quản lý bài viết',
                 }

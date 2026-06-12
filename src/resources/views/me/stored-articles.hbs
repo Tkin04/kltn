@@ -39,20 +39,46 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4 d-flex align-items-center">
-            <div class="form-check">
-                <input class="form-check-input mt-0" type="checkbox" value="" id="checkbox-all">
-                <label class="form-check-label" for="select-all-checkbox">
-                    Chọn tất cả
-                </label>
+        <div class="mt-4 d-flex align-items-center gap-2 flex-wrap">
+            <div class="d-flex align-items-center gap-2">
+                <div class="form-check">
+                    <input class="form-check-input mt-0" type="checkbox" value="" id="checkbox-all">
+                    <label class="form-check-label" for="select-all-checkbox">
+                        Chọn tất cả
+                    </label>
+                </div>
+
+                <select class="form-control form-control-sm checkbox-select-all-options" name="action" required>
+                    <option value="">-- Hành động --</option>
+                    <option value="delete">Xóa</option>
+                </select>
+
+                <button class="btn btn-primary btn-sm check-all-submit-btn disabled">Áp dụng</button>
             </div>
 
-            <select class="form-control form-control-sm checkbox-select-all-options" name="action" required>
-                <option value="">-- Hành động --</option>
-                <option value="delete">Xóa</option>
-            </select>
+            <form
+                method="GET"
+                action="/me/stored/articles"
+                class="ms-auto d-flex gap-2"
+            >
+                <input
+                    type="text"
+                    id="admin-search-input"
+                    name="search"
+                    class="form-control form-control-sm"
+                    placeholder="Tìm tiêu đề bài viết..."
+                    style="width:260px;"
+                    value="{{search}}"
+                >
 
-            <button class="btn btn-primary btn-sm check-all-submit-btn disabled">Áp dụng</button>
+                <button
+                    type="button"
+                    id="admin-search-btn"
+                    class="btn btn-outline-primary btn-sm"
+                >
+                    Tìm
+                </button>
+            </form>
         </div>
     </div>
     <table class="table mt-4">
@@ -60,10 +86,10 @@
             <tr>
                 <th scope="col"></th>
                 <th scope="col">#</th>
-                <th scope="col">Tiêu đề {{{sortable 'name' _sort}}}</th>
-                <th scope="col">Danh mục {{{sortable 'category' _sort}}}</th>
-                <th scope="col">Trạng thái {{{sortable 'status' _sort}}}</th>
-                <th scope="col" colspan="2">Ngày đăng {{{sortable 'createdAt' _sort}}}</th>
+                <th scope="col">Tiêu đề {{{sortable 'name' _sort search}}}</th>
+                <th scope="col">Danh mục {{{sortable 'category' _sort search}}}</th>
+                <th scope="col">Trạng thái {{{sortable 'status' _sort search}}}</th>
+                <th scope="col" colspan="2">Ngày đăng {{{sortable 'createdAt' _sort search}}}</th>
             </tr>
         </thead>
         <tbody>
@@ -102,11 +128,12 @@
             {{/each}}
         </tbody>
     </table>
+    {{#if articles.length}}
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
             {{#if pagination.hasPrev}}
             <li class="page-item">
-                <a class="page-link" href="?page={{pagination.prevPage}}">← Trước</a>
+                <a class="page-link" href="?{{searchQuery}}{{sortQuery}}page={{pagination.prevPage}}">← Trước</a>
             </li>
             {{/if}}
             <li class="page-item active">
@@ -116,11 +143,12 @@
             </li>
             {{#if pagination.hasNext}}
             <li class="page-item">
-                <a class="page-link" href="?page={{pagination.nextPage}}">Sau →</a>
+                <a class="page-link" href="?{{searchQuery}}{{sortQuery}}page={{pagination.nextPage}}">Sau →</a>
             </li>
             {{/if}}
         </ul>
     </nav>
+    {{/if}}
 </form>
 
 {{!-- confirm delete modal --}}
@@ -197,5 +225,58 @@ document.addEventListener('DOMContentLoaded', function () {
             checkAllSubmitBtn.classList.toggle('disabled', checked === 0);
         }
     }
+    const searchInput =
+        document.getElementById(
+            'admin-search-input'
+        );
+
+    const searchBtn =
+        document.getElementById(
+            'admin-search-btn'
+        );
+
+    console.log(
+        'admin input:',
+        searchInput
+    );
+
+    if (
+        searchInput &&
+        searchBtn
+    ) {
+        searchBtn.addEventListener(
+            'click',
+            function () {
+
+                console.log(
+                    'real value:',
+                    searchInput.value
+                );
+
+                const keyword =
+                    searchInput.value
+                        .trim();
+
+                console.log(
+                    'search keyword:',
+                    keyword
+                );
+
+                window.location.href =
+                    `/me/stored/articles?search=${encodeURIComponent(keyword)}`;
+            }
+        );
+    }
+    const searchParams =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    console.log(
+        'search query:',
+        searchParams.get(
+            'search'
+        )
+    );
 });
 </script>

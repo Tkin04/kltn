@@ -67,24 +67,44 @@ app.engine(
         extname: '.hbs',
         helpers: {
             sum: (a, b) => a + b,
-            sortable: (field, sort) => {
-                const sortType = field === sort.column ? sort.type : 'default';
+            sortable: (field, sort, search) => {
+
+                const sortType =
+                    field === sort.column
+                        ? sort.type
+                        : 'default';
 
                 const icons = {
-                    default: 'bi-arrow-down-up',
-                    desc: 'bi bi-sort-down',
-                    asc: 'bi bi-sort-down-alt' };
+                    default:
+                        'bi-arrow-down-up',
+                    desc:
+                        'bi bi-sort-down',
+                    asc:
+                        'bi bi-sort-down-alt',
+                };
 
                 const types = {
                     default: 'desc',
                     asc: 'desc',
-                    desc: 'asc' };
+                    desc: 'asc',
+                };
 
-                const icon = icons[sortType];
-                const type = types[sortType];
+                const icon =
+                    icons[sortType];
 
-                return `<a href="?_sort&column=${field}&type=${type}">
-                <span class="${icon}"></span></a>`;
+                const type =
+                    types[sortType];
+
+                const searchQuery =
+                    search
+                        ? `search=${encodeURIComponent(search)}&`
+                        : '';
+
+                return `
+                    <a href="?${searchQuery}_sort&column=${field}&type=${type}">
+                        <span class="${icon}"></span>
+                    </a>
+                `;
             },
             eq: (a, b) => a === b,
             formatDate: (date) => {
