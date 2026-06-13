@@ -1,4 +1,5 @@
 const Article = require('../models/Article');
+const categories = require('../../constants/categories');
 const { multipleMongooseToObject,} = require('../../util/mongoose');
 const escapeRegex =(text) => text.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
 
@@ -29,15 +30,7 @@ class SiteController {
                 .limit(3);
 
             // HERO CONTENT
-            const categoryMap = {
-                transfer: 'Tin chuyển nhượng',
-                'premier-league': 'Ngoại hạng Anh',
-                'champions-league': 'Champions League',
-                laliga: 'La Liga',
-                'serie-a': 'Serie A',
-                bundesliga: 'Bundesliga',
-                general: 'Tin tức chung',
-            };
+
 
             let heroTitle = 'Cập nhật tin tức bóng đá nhanh nhất';
 
@@ -54,10 +47,25 @@ class SiteController {
 
             // CATEGORY
             else if (category) {
-                heroTitle = categoryMap[category]|| 'Tin tức bóng đá';
-                heroDescription = articles.length > 0
-                    ? `Có ${articles.length} bài viết thuộc chuyên mục ${heroTitle}`
-                    : `Hiện chưa có bài viết nào thuộc chuyên mục ${heroTitle}`;
+
+                const currentCategory =
+                    categories.find(
+                        (
+                            item
+                        ) =>
+                            item.slug ===
+                            category
+                    );
+
+                heroTitle =
+                    currentCategory
+                        ?.name
+                    || 'Tin tức bóng đá';
+
+                heroDescription =
+                    articles.length > 0
+                        ? `Có ${articles.length} bài viết thuộc chuyên mục ${heroTitle}`
+                        : `Hiện chưa có bài viết nào thuộc chuyên mục ${heroTitle}`;
             }
 
             res.render( 'home', {
@@ -69,11 +77,11 @@ class SiteController {
                 heroDescription,
                 metaDescription: heroDescription,
                 ogImage: '/img/logo.png',
-                title: search
+                title:
+                    search
                         ? `Tìm kiếm: ${search}`
                         : category
-                        ? categoryMap[category]
-                            || 'Tin tức bóng đá'
+                        ? heroTitle
                         : 'Trang chủ',
             });
         } catch (error) {

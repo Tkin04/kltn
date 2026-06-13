@@ -1,4 +1,5 @@
 const Article = require('../models/Article');
+const HeaderConfig = require('../models/HeaderConfig');
 const { multipleMongooseToObject } = require('../../util/mongoose')
 
 class MeController {
@@ -29,15 +30,9 @@ class MeController {
                 ],
             };
         }
-console.log(
-    'search:',
-    search
-);
 
-console.log(
-    'queryFilter:',
-    queryFilter
-);
+
+
         let articleQuery = Article.find( queryFilter );
 
         if ( req.query.column && req.query.type ) {
@@ -47,9 +42,7 @@ console.log(
         articleQuery = articleQuery
             .skip(skip)
             .limit(limit);
-console.log(
-    'query executing'
-);
+
         Promise.all([
             articleQuery,
             Article.countDocumentsDeleted(),
@@ -146,5 +139,130 @@ console.log(
         })
         .catch(next);
     }
+    // [GET] /me/header-settings
+    async headerSettings(
+        req,
+        res,
+        next
+    ) {
+        try {
+
+            let config =
+                await HeaderConfig
+                    .findOne();
+
+            // First time create
+            if (!config) {
+
+                config =
+                    await HeaderConfig
+                        .create({
+                            headerItems: [
+                                'world-cup',
+                                'champions-league',
+                                'premier-league',
+                                'laliga',
+                            ],
+                        });
+            }
+
+            // Backward compatibility
+            if (
+                !config.headerItems
+                || !config.headerItems.length
+            ) {
+
+                config.headerItems = [
+                    config.featuredCategory
+                    || 'world-cup',
+
+                    'champions-league',
+                    'premier-league',
+                    'laliga',
+                ];
+
+                await config.save();
+            }
+
+            res.render(
+                'me/header-settings',
+                {
+                    title:
+                        'Tùy chỉnh Header',
+
+                    headerItems:
+                        config
+                            .headerItems,
+                    categories: [
+                        {
+                            slug: 'world-cup',
+                            name: 'World Cup',
+                        },
+                        {
+                            slug: 'euro',
+                            name: 'Euro',
+                        },
+                        {
+                            slug: 'u23-asia',
+                            name: 'U23 Châu Á',
+                        },
+                        {
+                            slug:
+                                'champions-league',
+                            name:
+                                'Champions League',
+                        },
+                        {
+                            slug:
+                                'premier-league',
+                            name:
+                                'Ngoại hạng Anh',
+                        },
+                        {
+                            slug: 'laliga',
+                            name: 'La Liga',
+                        },
+                    ],
+                }
+            );
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // [POST] /me/header-settings
+    async updateHeaderSettings(
+        req,
+        res,
+        next
+    ) {
+        try {
+
+            await HeaderConfig
+                .findOneAndUpdate(
+                    {},
+                    {
+                        headerItems: [
+                            req.body.slot1,
+                            req.body.slot2,
+                            req.body.slot3,
+                            req.body.slot4,
+                        ],
+                    },
+                    {
+                        upsert:
+                            true,
+                    }
+                );
+
+            res.redirect(
+                '/me/header-settings'
+            );
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
+
 module.exports = new MeController();

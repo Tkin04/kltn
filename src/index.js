@@ -15,6 +15,8 @@ const SortMiddleware = require('./app/middlewares/SortMiddleware');
 const router = require('./routes');
 const db = require('./config/db');
 
+const HeaderConfig = require('./app/models/HeaderConfig');
+
 // Connect to DB
 db.connect();
 
@@ -47,13 +49,35 @@ app.use(
         }),
     }),
 );
-app.use((req, res, next) => {
-
-    res.locals.user =
-        req.session.user;
-
-    next();
-});
+app.use( async (req,res,next) => {
+        res.locals.user = req.session.user;
+        try {
+            const config = await HeaderConfig.findOne();
+            res.locals.headerItems =
+                config
+                    ?.headerItems
+                || [
+                    'world-cup',
+                    'champions-league',
+                    'premier-league',
+                    'laliga',
+                ];
+        }
+        catch (error) {
+            console.error(
+                'Header config error:',
+                error
+            );
+            res.locals.headerItems = [
+                'world-cup',
+                'champions-league',
+                'premier-league',
+                'laliga',
+            ];
+        }
+        next();
+    }
+);
 
 // Custom middlewares
 app.use(SortMiddleware);
@@ -107,11 +131,60 @@ app.engine(
                 `;
             },
             eq: (a, b) => a === b,
+            formatCategoryName:
+                (slug) => {
+
+                    const names = {
+                        'world-cup':
+                            'World Cup',
+
+                        euro:
+                            'Euro',
+
+                        'u23-asia':
+                            'U23 Châu Á',
+
+                        'copa-america':
+                            'Copa America',
+
+                        'champions-league':
+                            'Champions League',
+
+                        'premier-league':
+                            'Ngoại hạng Anh',
+                    };
+
+                    return (
+                        names[slug]
+                        || slug
+                    );
+                },
             formatDate: (date) => {
                 if (!date) return '';
 
                 return new Date(date).toLocaleDateString('vi-VN');
             },
+            addOne: (number) => number + 1,
+            getCategoryName:
+                (slug) => {
+
+                    const categories =
+                        require(
+                            './constants/categories'
+                        );
+
+                    const category =
+                        categories.find(
+                            (item) =>
+                                item.slug ===
+                                slug
+                        );
+
+                    return (
+                        category?.name
+                        || 'Tin tức'
+                    );
+                },
         }
     }),
 );

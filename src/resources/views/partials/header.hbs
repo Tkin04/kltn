@@ -27,29 +27,24 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{#if (eq category "transfer")}}active{{/if}}" href="/?category=transfer" >
-                        Chuyển nhượng
-                    </a>
-                </li>
+                {{#each headerItems}}
 
                 <li class="nav-item">
-                    <a class="nav-link {{#if (eq category "premier-league")}}active{{/if}}" href="/?category=premier-league" >
-                        Ngoại hạng Anh
+
+                    <a
+                        class="nav-link
+                        {{#if (eq ../category this)}}
+                            active
+                        {{/if}}"
+
+                        href="/?category={{this}}"
+                    >
+                        {{formatCategoryName this}}
                     </a>
+
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{#if (eq category "champions-league")}}active{{/if}}" href="/?category=champions-league" >
-                        Champions League
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{#if (eq category "laliga")}}active{{/if}}" href="/?category=laliga" >
-                        La Liga
-                    </a>
-                </li>
+                {{/each}}
 
             </ul>
 
@@ -125,7 +120,14 @@
                                 Quản lý bài viết
                             </a>
                         </li>
-
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="/me/header-settings"
+                            >
+                                Tùy chỉnh Header
+                            </a>
+                        </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>

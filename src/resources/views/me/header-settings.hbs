@@ -1,0 +1,103 @@
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        Tùy chỉnh Header
+                    </h3>
+                </div>
+
+                <div class="card-body">
+
+                <form
+                    id="header-settings-form"
+                    method="POST"
+                    action="/me/header-settings"
+                >
+
+                    {{#each headerItems}}
+
+                    <div class="mb-4">
+
+                        <label
+                            class="form-label fw-bold"
+                        >
+                            Slot {{addOne @index}}
+                        </label>
+
+                        <select
+                            name="slot{{addOne @index}}"
+                            class="form-select header-slot"
+                        >
+
+                            {{#each ../categories}}
+
+                            <option
+                                value="{{slug}}"
+
+                                {{#if
+                                    (eq
+                                        slug
+                                        ../this
+                                    )
+                                }}
+                                    selected
+                                {{/if}}
+                            >
+                                {{name}}
+                            </option>
+
+                            {{/each}}
+
+                        </select>
+
+                    </div>
+
+                    {{/each}}
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Lưu thay đổi
+                    </button>
+
+                </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+        const selects = document.querySelectorAll('.header-slot');
+        function updateOptions() {
+            const selectedValues = Array.from(selects).map ((select) => select.value );
+            selects.forEach(
+                ( currentSelect ) => {
+                    const currentValue = currentSelect.value;
+                    currentSelect .querySelectorAll('option').forEach(
+                        ( option ) => {
+                            option.disabled = selectedValues.includes(option.value) && option.value !== currentValue;
+                        }
+                    );
+                }
+            );
+        }
+
+        selects.forEach(( select ) => { select.addEventListener('change', updateOptions); });
+
+        updateOptions();
+    }
+);
+
+</script>

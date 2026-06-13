@@ -30,33 +30,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <span class="badge bg-danger">
-                                {{#if (eq this.category "transfer")}}
-                                    Chuyển nhượng
-                                {{/if}}
-
-                                {{#if (eq this.category "premier-league")}}
-                                    Ngoại hạng Anh
-                                {{/if}}
-
-                                {{#if (eq this.category "champions-league")}}
-                                    Champions League
-                                {{/if}}
-
-                                {{#if (eq this.category "laliga")}}
-                                    La Liga
-                                {{/if}}
-
-                                {{#if (eq this.category "serie-a")}}
-                                    Serie A
-                                {{/if}}
-
-                                {{#if (eq this.category "bundesliga")}}
-                                    Bundesliga
-                                {{/if}}
-
-                                {{#if (eq this.category "general")}}
-                                    Tin tức chung
-                                {{/if}}
+                                {{getCategoryName this.category}}
                             </span>
                             <span class="badge bg-dark">
                                 👁 {{this.views}} lượt xem
@@ -111,33 +85,7 @@
                 </a>
                 <div class="card-body d-flex flex-column">
                 <span class="badge bg-danger align-self-start mb-2" >
-                    {{#if (eq this.category "transfer")}}
-                        Chuyển nhượng
-                    {{/if}}
-
-                    {{#if (eq this.category "premier-league")}}
-                        Ngoại hạng Anh
-                    {{/if}}
-
-                    {{#if (eq this.category "champions-league")}}
-                        Champions League
-                    {{/if}}
-
-                    {{#if (eq this.category "laliga")}}
-                        La Liga
-                    {{/if}}
-
-                    {{#if (eq this.category "serie-a")}}
-                        Serie A
-                    {{/if}}
-
-                    {{#if (eq this.category "bundesliga")}}
-                        Bundesliga
-                    {{/if}}
-
-                    {{#if (eq this.category "general")}}
-                        Tin tức chung
-                    {{/if}}
+                    {{getCategoryName this.category}}
                 </span>
                     <a href="/articles/{{this.slug}}" class="text-decoration-none text-dark">
                         <h5 class="fw-bold card-title">

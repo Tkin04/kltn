@@ -19,4 +19,18 @@ router.get(
  meController.trashArticles
 );
 
+router.get(
+ '/header-settings',
+ authMiddleware,
+ roleMiddleware(['admin']),
+ meController.headerSettings
+);
+
+router.post(
+ '/header-settings',
+ authMiddleware,
+ roleMiddleware(['admin']),
+ meController.updateHeaderSettings
+);
+
 module.exports = router;

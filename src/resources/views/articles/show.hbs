@@ -3,33 +3,7 @@
         <div class="col-lg-9">
             <!-- Category -->
             <span class="badge bg-danger mb-3">
-                {{#if (eq article.category "transfer")}}
-                    Chuyển nhượng
-                {{/if}}
-
-                {{#if (eq article.category "premier-league")}}
-                    Ngoại hạng Anh
-                {{/if}}
-
-                {{#if (eq article.category "champions-league")}}
-                    Champions League
-                {{/if}}
-
-                {{#if (eq article.category "laliga")}}
-                    La Liga
-                {{/if}}
-
-                {{#if (eq article.category "serie-a")}}
-                    Serie A
-                {{/if}}
-
-                {{#if (eq article.category "bundesliga")}}
-                    Bundesliga
-                {{/if}}
-
-                {{#if (eq article.category "general")}}
-                    Tin tức chung
-                {{/if}}
+                {{categoryName}}
             </span>
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb mb-0">
@@ -108,27 +82,7 @@
                             </a>
                             <div class="card-body">
                                 <span class="badge bg-danger mb-2">
-                                    {{#if (eq this.category "transfer")}}
-                                        Chuyển nhượng
-                                    {{/if}}
-                                    {{#if (eq this.category "premier-league")}}
-                                        Ngoại hạng Anh
-                                    {{/if}}
-                                    {{#if (eq this.category "champions-league")}}
-                                        Champions League
-                                    {{/if}}
-                                    {{#if (eq this.category "laliga")}}
-                                        La Liga
-                                    {{/if}}
-                                    {{#if (eq this.category "serie-a")}}
-                                        Serie A
-                                    {{/if}}
-                                    {{#if (eq this.category "bundesliga")}}
-                                        Bundesliga
-                                    {{/if}}
-                                    {{#if (eq this.category "general")}}
-                                        Tin tức chung
-                                    {{/if}}
+                                    {{lookup ../categories this.category}}
                                 </span>                                
                                 <h6 class=" fw-bold ">
                                     <a

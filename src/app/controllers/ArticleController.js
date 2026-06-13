@@ -1,4 +1,5 @@
 const Article = require('../models/Article');
+const categories = require('../../constants/categories');
 const slugify = require('slugify');
 const { mongooseToObject, multipleMongooseToObject } = require('../../util/mongoose');
 
@@ -40,18 +41,16 @@ class ArticleController {
                     .length;
 
             const readingTime = Math.max( 1, Math.ceil( wordCount / 200 ));
-            const categoryMap = {
-                premierleague:'Premier League',
-                laliga:'La Liga',
-                bundesliga:'Bundesliga',
-                seriea:'Serie A',
-                ligue1:'Ligue 1',
-                transfer:'Chuyển nhượng',
-                vietnam:'Bóng đá Việt Nam',
-                general:'Tin tức',
-            };
+            const currentCategory =
+                categories.find(
+                    (category) =>
+                        category.slug ===
+                        article.category
+                );
 
-            const categoryName = categoryMap[ article.category ] || 'Tin tức';
+            const categoryName =
+                currentCategory?.name
+                || 'Tin tức';
             res.render('articles/show', {
                 article: mongooseToObject(article),
                 relatedArticles:multipleMongooseToObject(relatedArticles),
@@ -68,7 +67,10 @@ class ArticleController {
 
     // [GET] /articles/create
     create(req, res, next) {
-        res.render('articles/create', { title: 'Đăng bài viết' });
+        res.render('articles/create', {
+            title: 'Đăng bài viết',
+            categories,
+        });
     }
 
     // [POST] /articles/store
@@ -129,6 +131,7 @@ class ArticleController {
                 article: mongooseToObject(article),
                 title: 'Chỉnh sửa bài viết',
                 page,
+                categories,
             });
         })
         .catch(next);

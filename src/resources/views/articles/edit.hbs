@@ -89,13 +89,22 @@
                     <label for="category" class="form-label" > Danh mục </label>
 
                     <select class="form-select" id="category" name="category" >
-                        <option value="general"> Tin tức chung </option>
-                        <option value="transfer"> Chuyển nhượng </option>
-                        <option value="premier-league"> Ngoại hạng Anh </option>
-                        <option value="champions-league"> Champions League </option>
-                        <option value="laliga"> La Liga </option>
-                        <option value="serie-a"> Serie A </option>
-                        <option value="bundesliga"> Bundesliga </option>
+                        {{#each categories}}
+                        <option
+                            value="{{slug}}"
+
+                            {{#if
+                                (eq
+                                    slug
+                                    ../article.category
+                                )
+                            }}
+                                selected
+                            {{/if}}
+                        >
+                            {{name}}
+                        </option>
+                        {{/each}}
                     </select>
 
                 </div>
