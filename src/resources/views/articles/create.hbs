@@ -151,37 +151,53 @@ document.addEventListener( 'DOMContentLoaded', function () {
     const DRAFT_KEY = 'article_create_draft';
 
     const saveDraft = () => {
-    if (!editor) return;
-
-    const draft = {
-        title:
+        if (!editor) return;
+        const title =
             document
                 .getElementById('name')
-                .value,
+                .value
+                .trim();
 
-        description:
+        const description =
             document
                 .getElementById(
                     'description'
                 )
-                .value,
+                .value
+                .trim();
 
-        category:
-            document.querySelector(
-                'select[name="category"]'
-            ).value,
+        const content =
+            editor
+                .getData()
+                .replace(/<[^>]*>/g, '')
+                .trim();
+        if (
+            !title &&
+            !description &&
+            !content
+        ) {
+            localStorage.removeItem(
+                DRAFT_KEY
+            );
+            return;
+        }
+        const draft = {
+            title,
+            description,
+            category:
+                document.querySelector(
+                    'select[name="category"]'
+                ).value,
+            content:
+                editor.getData(),
+            updatedAt:
+                Date.now()
+        };
 
-        content:
-            editor.getData(),
-
-        updatedAt:
-            Date.now()
-    };
-
-    localStorage.setItem(
-        DRAFT_KEY,
-        JSON.stringify(draft)
-    );
+        localStorage.setItem(
+            DRAFT_KEY,
+            JSON.stringify(draft)
+        );
     };
 
     ClassicEditor.create(
@@ -260,10 +276,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
                     }
                 }
             }
-            setInterval(
-                saveDraft,
-                2000
-            );
+            const autoSaveInterval =
+                setInterval(
+                    saveDraft,
+                    2000
+                );
 
             const form = document.querySelector( 'form[action="/articles/store"]' ); 
 
@@ -359,6 +376,9 @@ document.addEventListener( 'DOMContentLoaded', function () {
                         );
                         return;
                     }
+                    clearInterval(
+                        autoSaveInterval
+                    );
 
                     localStorage.removeItem(
                         DRAFT_KEY

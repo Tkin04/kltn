@@ -66,7 +66,7 @@
                 {{/if}}
             </h2>
             <p class="text-muted mb-0">
-                Có {{articles.length}} bài viết
+                Có {{totalArticles}} bài viết
             </p>
         </div>
     </div>
@@ -103,9 +103,62 @@
         </div>
         {{/each}}
     </div>
+    {{#if showPagination}}
 
+    <nav class="mt-5">
+
+        <ul class="pagination justify-content-center">
+
+            {{#if pagination.hasPrev}}
+
+            <li class="page-item">
+                <a
+                    class="page-link"
+                    href="/?{{searchQuery}}{{categoryQuery}}page={{pagination.prevPage}}"
+                >
+                    &laquo;
+                </a>
+            </li>
+
+            {{/if}}
+
+            {{#each pagination.pages}}
+
+            <li class="page-item {{#if (eq this ../pagination.page)}}active{{/if}}">
+
+                <a
+                    class="page-link"
+                    href="/?{{../searchQuery}}{{../categoryQuery}}page={{this}}"
+                >
+                    {{this}}
+                </a>
+
+            </li>
+
+            {{/each}}
+
+            {{#if pagination.hasNext}}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="/?{{searchQuery}}{{categoryQuery}}page={{pagination.nextPage}}"
+                >
+                    &raquo;
+                </a>
+
+            </li>
+
+            {{/if}}
+
+        </ul>
+
+    </nav>
+
+    {{/if}}
     <!-- Empty state -->
-    {{#unless articles.length}}
+    {{#unless totalArticles}}
     <div class="text-center py-5">
 
         <div

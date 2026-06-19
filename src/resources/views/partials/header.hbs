@@ -22,7 +22,7 @@
             <ul class="navbar-nav me-lg-4 flex-nowrap">
 
                 <li class="nav-item">
-                    <a class="nav-link {{#unless category}}active{{/unless}}" href="/" >
+                    <a class="nav-link {{#if isHome}}active{{/if}}" href="/" >
                         Trang chủ
                     </a>
                 </li>
@@ -39,13 +39,25 @@
 
                         href="/?category={{this}}"
                     >
-                        {{formatCategoryName this}}
+                        {{getCategoryName this}}
                     </a>
 
                 </li>
 
                 {{/each}}
+                <li class="nav-item">
 
+                    <a
+                        class="nav-link
+                        {{#if (eq categoryPage true)}}
+                            active
+                        {{/if}}"
+                        href="/categories"
+                    >
+                        Chuyên mục
+                    </a>
+
+                </li>
             </ul>
 
             <!-- Search -->

@@ -11,5 +11,9 @@ router.get(
         );
     }
 );
+router.get(
+    '/categories',
+    siteController.categories
+);
 router.get('/', siteController.index);
 module.exports = router;

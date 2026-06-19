@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const HeaderConfig = require('../models/HeaderConfig');
+const categories = require('../../constants/categories');
 const { multipleMongooseToObject } = require('../../util/mongoose')
 
 class MeController {
@@ -193,36 +194,7 @@ class MeController {
                     headerItems:
                         config
                             .headerItems,
-                    categories: [
-                        {
-                            slug: 'world-cup',
-                            name: 'World Cup',
-                        },
-                        {
-                            slug: 'euro',
-                            name: 'Euro',
-                        },
-                        {
-                            slug: 'u23-asia',
-                            name: 'U23 Châu Á',
-                        },
-                        {
-                            slug:
-                                'champions-league',
-                            name:
-                                'Champions League',
-                        },
-                        {
-                            slug:
-                                'premier-league',
-                            name:
-                                'Ngoại hạng Anh',
-                        },
-                        {
-                            slug: 'laliga',
-                            name: 'La Liga',
-                        },
-                    ],
+                    categories,
                 }
             );
         }

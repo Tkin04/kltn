@@ -82,7 +82,7 @@ app.use( async (req,res,next) => {
 // Custom middlewares
 app.use(SortMiddleware);
 
-// app.use(morgan('combined'))
+app.use(morgan('combined'))
 
 // Template engine
 app.engine(
@@ -131,34 +131,7 @@ app.engine(
                 `;
             },
             eq: (a, b) => a === b,
-            formatCategoryName:
-                (slug) => {
-
-                    const names = {
-                        'world-cup':
-                            'World Cup',
-
-                        euro:
-                            'Euro',
-
-                        'u23-asia':
-                            'U23 Châu Á',
-
-                        'copa-america':
-                            'Copa America',
-
-                        'champions-league':
-                            'Champions League',
-
-                        'premier-league':
-                            'Ngoại hạng Anh',
-                    };
-
-                    return (
-                        names[slug]
-                        || slug
-                    );
-                },
+            
             formatDate: (date) => {
                 if (!date) return '';
 

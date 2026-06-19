@@ -222,15 +222,29 @@ class ArticleController {
     
     //[POST] /articles/handle-form-actions
     handleFormActions(req, res, next){
-        const page = Math.max( 1, parseInt( req.query.page ) || 1 );
-        switch(req.body.action){
+        const page =
+            Math.max(
+                1,
+                parseInt(req.query.page) || 1
+            );
+
+        const articleIds =
+            req.body.articleIds || [];
+
+        if (!articleIds.length) {
+            return res.redirect(
+                `/me/stored/articles?page=${page}`
+            );
+        }
+
+        switch (req.body.action) {
             case 'delete':
                 Article.delete({
-                    _id: { $in: req.body.articleIds },
+                    _id: { $in: articleIds },
                     author: req.session.user._id,
                 })
                     .then(result => {
-                        const selectedCount = req.body.articleIds.length;
+                        const selectedCount = articleIds.length;
                         const deletedCount = result.modifiedCount;
                         const deniedCount = selectedCount - deletedCount;
 
@@ -253,11 +267,11 @@ class ArticleController {
                 break;
             case 'restore':
                 Article.restore({
-                    _id: { $in: req.body.articleIds },
+                    _id: { $in: articleIds },
                     author: req.session.user._id,
                 })
                     .then(result => {
-                        const selectedCount = req.body.articleIds.length;
+                        const selectedCount = articleIds.length;
                         const restoredCount = result.modifiedCount;
                         const deniedCount = selectedCount - restoredCount;
 
@@ -270,7 +284,7 @@ class ArticleController {
                                         + 'không thuộc quyền '
                                         + 'quản lý của bạn.'
                                     );
-                                    window.location = '/me/trash/articles?page=${page}'';
+                                    window.location = '/me/trash/articles?page=${page}';
                                 </script>
                             `);
                         }
@@ -280,12 +294,12 @@ class ArticleController {
                 break;
             case 'force-delete':
                 Article.deleteMany({
-                    _id: { $in: req.body.articleIds },
+                    _id: { $in: articleIds },
                     author: req.session.user._id,
                 })
                     .then(result => {
-                        const selectedCount = req.body.articleIds.length;
-                        const fdeletedCount = result.modifiedCount;
+                        const selectedCount = articleIds.length;
+                        const fdeletedCount = result.deletedCount;
                         const deniedCount = selectedCount - fdeletedCount;
 
                         if (deniedCount > 0) {
