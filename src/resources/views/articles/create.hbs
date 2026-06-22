@@ -129,7 +129,9 @@
     </div>
 
 </div>
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<link rel="stylesheet" href="/vendor/jodit/jodit.min.css">
+<script src="/vendor/jodit/jodit.min.js"></script>
+<script src="/js/jodit-google-paste.js"></script>
 
 <script>
 const imageInput = document.querySelector( 'input[name="image"]' );
@@ -168,7 +170,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
         const content =
             editor
-                .getData()
+                .value
                 .replace(/<[^>]*>/g, '')
                 .trim();
         if (
@@ -189,7 +191,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                     'select[name="category"]'
                 ).value,
             content:
-                editor.getData(),
+                editor.value,
             updatedAt:
                 Date.now()
         };
@@ -199,201 +201,175 @@ document.addEventListener( 'DOMContentLoaded', function () {
             JSON.stringify(draft)
         );
     };
+    editor = Jodit.make('#content', {
+        height: 500,
+        toolbarAdaptive: false,
 
-    ClassicEditor.create(
-    document.querySelector( '#content' ),
-    {
-        toolbar: [
-            'heading',
-            '|',
-            'bold',
-            'italic',
-            '|',
-            'bulletedList',
-            'numberedList',
-            '|',
-            'link',
-            'insertTable',
-            '|',
-            'undo',
-            'redo'
+        removeButtons: [
+            'file','print','preview','spellcheck','video',
         ],
+        uploader: {
+            url: '/articles/upload-editor-image',
 
-        simpleUpload: {
-            uploadUrl:
-                '/articles/upload-editor-image'
+            isSuccess(resp) {
+                return !!resp.url || Array.isArray(resp.files);
+            },
+            process(resp) {
+                if (resp.url) {
+                    return {
+                        files: [resp.url],
+                        isImages: [true],
+                        path: '',
+                        baseurl: ''
+                    };
+                }
+
+                return {
+                    files: resp.files.map(item => item.url),
+                    isImages: resp.files.map(() => true),
+                    path: '',
+                    baseurl: ''
+                };
+            },
+        }
+    });
+    attachGooglePaste(editor);
+
+    const savedDraft = localStorage.getItem(
+        DRAFT_KEY
+    );
+    if (savedDraft) {
+
+        const shouldRestore = confirm('Phát hiện bản nháp chưa đăng.\nBạn có muốn khôi phục không?');
+
+        if (shouldRestore) {
+            const draft = JSON.parse(savedDraft);
+
+            document
+                .getElementById('name')
+                .value =
+                    draft.title || '';
+
+            document
+                .getElementById('description')
+                .value = draft.description || '';
+
+            const categoryEl = document.querySelector('select[name="category"]');
+
+            if ( categoryEl && draft.category ) {
+                categoryEl.value = draft.category;
+            }
+
+            if (draft.content) {
+                editor.value = draft.content;
+            }
         }
     }
-    )
-    .then(newEditor => { 
-            editor = newEditor;
+    const autoSaveInterval = setInterval(saveDraft,2000);
+    const form = document.querySelector( 'form[action="/articles/store"]' );
 
-            const savedDraft = localStorage.getItem(
+    form.addEventListener(
+        'submit',
+        function (e) {
+            e.preventDefault();
+
+            editor.synchronizeValues();
+
+            const title = document
+                .getElementById('name')
+                .value
+                .trim();
+
+            const description = document
+                .getElementById('description')
+                .value
+                .trim();
+
+            const image = document
+                .querySelector(
+                    'input[name="image"]'
+                )
+                .files[0];
+
+            const rawContent = editor.value;
+
+            const parser = new DOMParser();
+
+            const doc =
+                parser.parseFromString(
+                    rawContent,
+                    'text/html'
+                );
+
+            const content =
+                doc.body.textContent
+                    .replace(
+                        /\u00A0/g,
+                        ''
+                    )
+                    .replace(
+                        /\s+/g,
+                        ''
+                    )
+                    .trim();
+
+            if (!title) {
+                alert(
+                    'Vui lòng nhập tiêu đề'
+                );
+                return;
+            }
+
+            if (title.length < 5) {
+                alert(
+                    'Tiêu đề phải có ít nhất 5 ký tự'
+                );
+                return;
+            }
+
+            if (!description) {
+                alert(
+                    'Vui lòng nhập mô tả'
+                );
+                return;
+            }
+
+            if (
+                description.length < 10
+            ) {
+                alert(
+                    'Mô tả ngắn phải có ít nhất 10 ký tự'
+                );
+                return;
+            }
+
+            if (!image) {
+                alert(
+                    'Vui lòng chọn ảnh'
+                );
+                return;
+            }
+
+            if (
+                content.length === 0
+            ) {
+                alert(
+                    'Vui lòng nhập nội dung bài viết'
+                );
+                return;
+            }
+            clearInterval(
+                autoSaveInterval
+            );
+
+            localStorage.removeItem(
                 DRAFT_KEY
             );
 
-            if (savedDraft) {
-
-                const shouldRestore =
-                    confirm(
-                        'Phát hiện bản nháp chưa đăng.\nBạn có muốn khôi phục không?'
-                    );
-
-                if (shouldRestore) {
-
-                    const draft =
-                        JSON.parse(savedDraft);
-
-                    document
-                        .getElementById('name')
-                        .value =
-                            draft.title || '';
-
-                    document
-                        .getElementById(
-                            'description'
-                        )
-                        .value =
-                            draft.description || '';
-
-                    const categoryEl =
-                        document.querySelector(
-                            'select[name="category"]'
-                        );
-
-                    if (
-                        categoryEl &&
-                        draft.category
-                    ) {
-                        categoryEl.value =
-                            draft.category;
-                    }
-
-                    if (draft.content) {
-                        editor.setData(
-                            draft.content
-                        );
-                    }
-                }
-            }
-            const autoSaveInterval =
-                setInterval(
-                    saveDraft,
-                    2000
-                );
-
-            const form = document.querySelector( 'form[action="/articles/store"]' ); 
-
-            form.addEventListener(
-                'submit',
-                function (e) {
-                    e.preventDefault();
-
-                    editor.updateSourceElement();
-
-                    const title = document
-                        .getElementById('name')
-                        .value
-                        .trim();
-
-                    const description = document
-                        .getElementById('description')
-                        .value
-                        .trim();
-
-                    const image = document
-                        .querySelector(
-                            'input[name="image"]'
-                        )
-                        .files[0];
-
-                    const rawContent =
-                        editor.getData();
-
-                    const parser =
-                        new DOMParser();
-
-                    const doc =
-                        parser.parseFromString(
-                            rawContent,
-                            'text/html'
-                        );
-
-                    const content =
-                        doc.body.textContent
-                            .replace(
-                                /\u00A0/g,
-                                ''
-                            )
-                            .replace(
-                                /\s+/g,
-                                ''
-                            )
-                            .trim();
-
-                    if (!title) {
-                        alert(
-                            'Vui lòng nhập tiêu đề'
-                        );
-                        return;
-                    }
-
-                    if (title.length < 5) {
-                        alert(
-                            'Tiêu đề phải có ít nhất 5 ký tự'
-                        );
-                        return;
-                    }
-
-                    if (!description) {
-                        alert(
-                            'Vui lòng nhập mô tả'
-                        );
-                        return;
-                    }
-
-                    if (
-                        description.length < 10
-                    ) {
-                        alert(
-                            'Mô tả ngắn phải có ít nhất 10 ký tự'
-                        );
-                        return;
-                    }
-
-                    if (!image) {
-                        alert(
-                            'Vui lòng chọn ảnh'
-                        );
-                        return;
-                    }
-
-                    if (
-                        content.length === 0
-                    ) {
-                        alert(
-                            'Vui lòng nhập nội dung bài viết'
-                        );
-                        return;
-                    }
-                    clearInterval(
-                        autoSaveInterval
-                    );
-
-                    localStorage.removeItem(
-                        DRAFT_KEY
-                    );
-
-                    this.submit();
-                }
-            );
-
-        })
-        .catch(error => {
-            console.error(error);
-        });
-
-    });
+            this.submit();
+        }
+    );  
+});
 </script>
 
 

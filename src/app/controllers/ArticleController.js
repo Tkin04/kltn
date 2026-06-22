@@ -88,7 +88,7 @@ class ArticleController {
     // [POST] /articles/upload-editor-image
     uploadEditorImage(req, res, next) {
         try {
-            if (!req.file) {
+            if (!req.files?.length) {
                 return res.status(400).json({
                     error: {
                         message: 'Không có ảnh upload'
@@ -96,9 +96,16 @@ class ArticleController {
                 });
             }
 
-            res.status(200).json({
-                url: `/uploads/${req.file.filename}`
-            });
+            const files = req.files.map(file => ({
+                url: `/uploads/${file.filename}`
+            }));
+
+            return res.json(
+                files.length === 1
+                    ? files[0]
+                    : { files }
+            );
+
         } catch (error) {
             next(error);
         }

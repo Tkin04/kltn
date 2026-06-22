@@ -199,67 +199,67 @@ class SiteController {
         res,
         next
     ) {
-    const categoryCounts =
-        await Article.aggregate([
-            {
-                $match: {
-                    status: 'published',
-                },
-            },
-            {
-                $group: {
-                    _id: '$category',
-                    count: {
-                        $sum: 1,
+        const categoryCounts =
+            await Article.aggregate([
+                {
+                    $match: {
+                        status: 'published',
                     },
                 },
-            },
-        ]);
+                {
+                    $group: {
+                        _id: '$category',
+                        count: {
+                            $sum: 1,
+                        },
+                    },
+                },
+            ]);
 
-    const categoryList =
-        categories.map(category => {
+        const categoryList =
+            categories.map(category => {
 
-            const found =
-                categoryCounts.find(
-                    item =>
-                        item._id ===
-                        category.slug
-                );
+                const found =
+                    categoryCounts.find(
+                        item =>
+                            item._id ===
+                            category.slug
+                    );
 
-            return {
+                return {
 
-                ...category,
+                    ...category,
 
-                count:
-                    found
-                        ? found.count
-                        : 0,
-            };
+                    count:
+                        found
+                            ? found.count
+                            : 0,
+                };
+
+            });
+
+        categoryList.sort((a, b) => {
+
+            if (b.count !== a.count) {
+                return b.count - a.count;
+            }
+
+            return a.name.localeCompare(
+                b.name,
+                'vi'
+            );
 
         });
 
-    categoryList.sort((a, b) => {
-
-        if (b.count !== a.count) {
-            return b.count - a.count;
-        }
-
-        return a.name.localeCompare(
-            b.name,
-            'vi'
+        res.render(
+            'categories',
+            {
+                title:
+                    'Tất cả chuyên mục',
+                categoryPage: true,
+                categories: categoryList,
+            }
         );
-
-    });
-
-    res.render(
-        'categories',
-        {
-            title:
-                'Tất cả chuyên mục',
-            categoryPage: true,
-            categories: categoryList,
-        }
-    );
 
     }
 }

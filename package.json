@@ -37,6 +37,7 @@
     "express": "^5.2.1",
     "express-handlebars": "^8.0.6",
     "express-session": "^1.19.0",
+    "jodit": "^4.12.27",
     "method-override": "^3.0.0",
     "mongoose": "^9.3.3",
     "mongoose-delete": "^1.0.7",

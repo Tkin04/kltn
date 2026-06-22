@@ -214,37 +214,7 @@
     opacity: .9;
     transform: scale(1.02);
 }
-.ck-content .image {
-    margin: 1rem 0;
-}
 
-.ck-content .image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-}
-
-.ck-content .image-style-align-left {
-    float: left;
-    margin-right: 20px;
-    max-width: 50%;
-}
-
-.ck-content .image-style-align-right {
-    float: right;
-    margin-left: 20px;
-    max-width: 50%;
-}
-
-.ck-content .image-style-block-align-center {
-    text-align: center;
-}
-
-.ck-content::after {
-    content: "";
-    display: block;
-    clear: both;
-}
 .article-content table {
     width: 100%;
     border-collapse: collapse;
@@ -322,4 +292,8 @@
 .category-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 10px 25px rgba(0,0,0,.12) !important;
+}
+.article-content img {
+    max-width: 100%;
+    height: auto;
 }

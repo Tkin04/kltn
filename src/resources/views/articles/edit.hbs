@@ -130,7 +130,9 @@
     </div>
 
 </div>
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<link rel="stylesheet" href="/vendor/jodit/jodit.min.css">
+<script src="/vendor/jodit/jodit.min.js"></script>
+<script src="/js/jodit-google-paste.js"></script>
 
 <script>
 document.addEventListener(
@@ -181,219 +183,150 @@ document.addEventListener(
             );
         }
 
-        ClassicEditor.create(
-            document.querySelector(
-                '#content'
-            ),
-            {
-                toolbar: [
-                    'heading',
-                    '|',
-                    'bold',
-                    'italic',
-                    '|',
-                    'bulletedList',
-                    'numberedList',
-                    '|',
-                    'link',
-                    'insertTable',
-                    '|',
-                    'undo',
-                    'redo'
-                ],
+        editor = Jodit.make('#content', {
+            height: 500,
+            toolbarAdaptive: false,
 
-                heading: {
-                    options: [
-                        {
-                            model:
-                                'paragraph',
-                            title:
-                                'Paragraph',
-                            class:
-                                'ck-heading_paragraph'
-                        },
-                        {
-                            model:
-                                'heading2',
-                            view: 'h2',
-                            title:
-                                'Heading 2',
-                            class:
-                                'ck-heading_heading2'
-                        },
-                        {
-                            model:
-                                'heading3',
-                            view: 'h3',
-                            title:
-                                'Heading 3',
-                            class:
-                                'ck-heading_heading3'
-                        }
-                    ]
+            removeButtons: [
+                'file','print','preview','spellcheck','video',
+            ],
+            uploader: {
+                url: '/articles/upload-editor-image',
+
+                isSuccess(resp) {
+                    return !!resp.url || Array.isArray(resp.files);
                 },
-
-                simpleUpload: {
-                    uploadUrl:
-                        '/articles/upload-editor-image'
-                }
-            }
-        )
-        .then(newEditor => {
-
-            editor =
-                newEditor;
-
-            // Detect CKEditor changes
-            editor.model.document.on(
-                'change:data',
-                markDirty
-            );
-
-            // Track form field changes
-            [
-                'name',
-                'description'
-            ].forEach(id => {
-                document
-                    .getElementById(id)
-                    ?.addEventListener(
-                        'input',
-                        markDirty
-                    );
-            });
-
-            [
-                'category',
-                'status'
-            ].forEach(id => {
-                document
-                    .getElementById(id)
-                    ?.addEventListener(
-                        'change',
-                        markDirty
-                    );
-            });
-
-            const statusEl =
-                document.getElementById(
-                    'status'
-                );
-
-            if (statusEl) {
-                statusEl
-                    .addEventListener(
-                        'change',
-                        markDirty
-                    );
-            }
-
-            // Warning before leave
-            const handleBeforeUnload = function (e) {
-
-                if (!isDirty) {
-                    return;
-                }
-
-                e.preventDefault();
-                e.returnValue = '';
-            };
-
-            window.addEventListener(
-                'beforeunload',
-                handleBeforeUnload
-            );
-
-            // Form validation
-            const form =
-                document.getElementById(
-                    'editArticleForm'
-                );
-            const submitBtn = form.querySelector(
-                'button[type="submit"]'
-            );
-            if (submitBtn) {
-                submitBtn.addEventListener(
-                    'click',
-                    function () {
-
-                        isSubmitting = true;
-                        isDirty = false;
-
-                        window.removeEventListener(
-                            'beforeunload',
-                            handleBeforeUnload
-                        );
-                    }
-                );
-            }
-            form.addEventListener(
-                'submit',
-                function (e) {
-
-                    e.preventDefault();
-
-                    editor.updateSourceElement();
-
-                    const title = document.getElementById( 'name' )
-                        .value
-                        .trim();
-                    const description = document.getElementById( 'description' )
-                        .value
-                        .trim();
-                    const doc = new DOMParser()
-                        .parseFromString(
-                            editor.getData(),
-                            'text/html'
-                        );
-                    const content = doc.body.textContent
-                        .replace(
-                            /\u00A0/g,
-                            ''
-                        )
-                        .replace(
-                            /\s+/g,
-                            ''
-                        )
-                        .trim();
-
-                    if (!title) {
-                        alert( 'Vui lòng nhập tiêu đề' );
-                        return;
+                process(resp) {
+                    if (resp.url) {
+                        return {
+                            files: [resp.url],
+                            isImages: [true],
+                            path: '',
+                            baseurl: ''
+                        };
                     }
 
-                    if ( title.length < 5 ) {
-                        alert( 'Tiêu đề phải có ít nhất 5 ký tự' );
-                        return;
-                    }
-
-                    if (!description) {
-                        alert( 'Vui lòng nhập mô tả' );
-                        return;
-                    }
-
-                    if ( description.length < 10 ) {
-                        alert( 'Mô tả ngắn phải có ít nhất 10 ký tự' );
-                        return;
-                    }
-
-                    if ( content.length === 0 ) {
-                        alert( 'Vui lòng nhập nội dung bài viết' );
-                        return;
-                    }
-
-                    HTMLFormElement
-                        .prototype
-                        .submit
-                        .call(form);
+                    return {
+                        files: resp.files.map(item => item.url),
+                        isImages: resp.files.map(() => true),
+                        path: '',
+                        baseurl: ''
+                    };
                 },
-            );
+            }
+        });
+        attachGooglePaste(editor);
 
-        })
-        .catch(error => {
-            console.error(error);
+        // Detect CKEditor changes
+        editor.events.on('change', markDirty);
+
+        // Track form field changes
+        [
+            'name',
+            'description'
+        ].forEach(id => {
+            document
+                .getElementById(id)
+                ?.addEventListener(
+                    'input',
+                    markDirty
+                );
         });
 
+        [
+            'category',
+            'status'
+        ].forEach(id => {
+            document
+                .getElementById(id)
+                ?.addEventListener(
+                    'change',
+                    markDirty
+                );
+        });
+
+        const statusEl = document.getElementById('status');
+        if (statusEl) {
+            statusEl
+                .addEventListener(
+                    'change',
+                    markDirty
+                );
+        }
+        
+        // Warning before leave
+        const handleBeforeUnload = function (e) {
+            if (!isDirty) {
+                return;
+            }
+            e.preventDefault();
+            e.returnValue = '';
+        };
+        window.addEventListener(
+            'beforeunload',
+            handleBeforeUnload
+        );
+        // Form validation
+        const form = document.getElementById(
+                'editArticleForm'
+            );
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function () {
+                isDirty = false;
+                window.removeEventListener('beforeunload',handleBeforeUnload);
+            });
+        }
+        form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                editor.synchronizeValues();
+                const title = document.getElementById( 'name' )
+                    .value
+                    .trim();
+                const description = document.getElementById( 'description' )
+                    .value
+                    .trim();
+                const doc = new DOMParser()
+                    .parseFromString(
+                        editor.value,
+                        'text/html'
+                    );
+                const content = doc.body.textContent
+                    .replace(
+                        /\u00A0/g,
+                        ''
+                    )
+                    .replace(
+                        /\s+/g,
+                        ''
+                    )
+                    .trim();
+                if (!title) {
+                    alert( 'Vui lòng nhập tiêu đề' );
+                    return;
+                }
+                if ( title.length < 5 ) {
+                    alert( 'Tiêu đề phải có ít nhất 5 ký tự' );
+                    return;
+                }
+                if (!description) {
+                    alert( 'Vui lòng nhập mô tả' );
+                    return;
+                }
+                if ( description.length < 10 ) {
+                    alert( 'Mô tả ngắn phải có ít nhất 10 ký tự' );
+                    return;
+                }
+                if ( content.length === 0 ) {
+                    alert( 'Vui lòng nhập nội dung bài viết' );
+                    return;
+                }
+                HTMLFormElement
+                    .prototype
+                    .submit
+                    .call(form);
+            },
+        );
     }
 );
 </script>

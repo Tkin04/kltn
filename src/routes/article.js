@@ -59,7 +59,7 @@ router.post(
     '/upload-editor-image',
     authMiddleware,
     roleMiddleware(['admin']),
-    upload.single('upload'),
+    upload.any(),
     articleController.uploadEditorImage
 );
 router.get(
